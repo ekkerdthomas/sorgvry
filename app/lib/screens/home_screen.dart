@@ -54,14 +54,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final medsColor = morningDone
         ? SorgvryColors.cardDone
         : (hour >= 9 ? SorgvryColors.cardLate : SorgvryColors.cardPending);
-    final medsSubtitle = morningDone ? 'Klaar' : 'Nog nie gedoen';
+    final medsSubtitle = morningDone ? 'Klaar' : 'Uitstaande';
 
     // Night meds card state
     final nightDone = medsData?.nightTaken ?? false;
     final nightColor = nightDone
         ? SorgvryColors.cardDone
         : (hour >= 20 ? SorgvryColors.cardLate : SorgvryColors.cardPending);
-    final nightSubtitle = nightDone ? 'Klaar' : 'Nog nie gedoen';
+    final nightSubtitle = nightDone ? 'Klaar' : 'Uitstaande';
 
     // BP card state
     final bpData = bp.value;
@@ -72,7 +72,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ? SorgvryColors.cardAlert
               : SorgvryColors.cardDone)
         : (hour >= 11 ? SorgvryColors.cardLate : SorgvryColors.cardPending);
-    final bpSubtitle = bpDone ? '${bpMap?.round()} MAP' : 'Nog nie gedoen';
+    final bpSubtitle = bpDone ? '${bpMap?.round()} MAP' : 'Uitstaande';
 
     // Water card state
     final waterData = water.value;
@@ -92,7 +92,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ? (walkData?.durationMin != null
               ? '${walkData!.durationMin} min'
               : 'Klaar')
-        : 'Nog nie gedoen';
+        : 'Uitstaande';
 
     // B12 card state
     final b12Done = medsData?.b12Taken ?? false;
