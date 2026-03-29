@@ -55,6 +55,19 @@ dart format
 flutter analyze lib/ --no-fatal-infos && dart analyze phast_backend/lib/
 ```
 
+### 4.5. Issue Reference Detection
+
+Detect if the current branch is an issue branch:
+
+```bash
+branch=$(git branch --show-current)
+if [[ "$branch" =~ ^([0-9]+)- ]]; then
+  issue_number="${BASH_REMATCH[1]}"
+fi
+```
+
+If on an issue branch, append `refs #N` to the commit message footer (before the `Co-Authored-By` trailer). Use `refs` not `closes` — the PR handles closing.
+
 ### 5. Stage and Commit
 
 Generate conventional commit with `Co-Authored-By` trailer. **Types**: feat, fix, refactor, style, test, docs, chore, perf.
@@ -83,6 +96,7 @@ See `reference.md` for common mistakes and error handling.
 
 - **REQUIRED**: `/validate-change` — MUST run before commit (hard gate)
 - **See also**: `/tdd` for test-driven implementation before committing
+- **See also**: `/issue` for issue-driven dev workflow (auto-invokes /commit)
 - **See also**: `/brainstorm` for design decisions before implementation
 - **See also**: `/security` for standalone security checks
 

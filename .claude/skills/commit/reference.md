@@ -32,6 +32,33 @@ After a successful commit, perform these in order:
 | **Hook failure** | Investigate root cause. Never bypass with `--no-verify` |
 | **Merge conflict in staging** | Resolve conflicts before staging. Never force-add |
 
+## Issue Branch Detection (Step 4.5)
+
+When committing on an issue branch (matching `^\d+-`), auto-append an issue reference to the commit message.
+
+### Detection
+
+```bash
+branch=$(git branch --show-current)
+if [[ "$branch" =~ ^([0-9]+)- ]]; then
+  issue_number="${BASH_REMATCH[1]}"
+fi
+```
+
+### Commit Message Format
+
+```
+feat: add blood pressure reading to card
+
+refs #3
+
+Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+```
+
+- Place `refs #N` on its own line in the footer, before `Co-Authored-By`
+- Use `refs` (not `closes`) — the PR handles closing the issue
+- Only add if issue number is detected from branch name
+
 ## Conventional Commit Types
 
 | Type | When to Use |
