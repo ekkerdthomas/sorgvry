@@ -174,6 +174,11 @@ class MedsScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 16),
                         PhotoCaptureButton(module: 'meds', session: session),
+                        const SizedBox(height: 16),
+                        FilledButton(
+                          onPressed: () => context.go('/'),
+                          child: const Text('KLAAR'),
+                        ),
                         if (canUndo) ...[
                           const SizedBox(height: 16),
                           TextButton(
