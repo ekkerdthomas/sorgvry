@@ -1,29 +1,33 @@
 # Sorgvry
 
-Afrikaans health companion app for Amanda Thomas. Offline-first Flutter app + Dart Frog backend on Raspberry Pi.
+Afrikaans health companion app for Amanda Thomas. Offline-first Flutter app (Android + Web PWA) with Dart Frog backend on Raspberry Pi.
 
 ## Project Structure
 
 Melos mono-repo:
 - `packages/sorgvry_shared/` — Drift database schema, models, API contracts (shared by app and backend)
-- `app/` — Flutter Android app (Riverpod + GoRouter)
+- `app/` — Flutter app (Android + Web PWA, Riverpod + GoRouter)
 - `backend/` — Dart Frog API server
+- `scripts/` — Build, deploy, and local dev scripts
+- `docs/` — Spec and design plans
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| App framework | Flutter (Android only) |
+| App framework | Flutter (Android + Web PWA) |
 | State management | Riverpod (AsyncNotifier + Repository pattern) |
 | Navigation | GoRouter |
 | Database | SQLite via Drift (shared schema in sorgvry_shared) |
 | Backend | Dart Frog |
 | Auth | JWT (dart_jsonwebtoken) |
+| Media storage | MinIO (S3-compatible, on Pi) |
+| Email | Mailer + Cron (daily summaries) |
 | Mono-repo | Melos |
 
 ## Architecture Decisions
 
-See `docs/plans/1-draft/2026-03-29-1800-architecture-decisions-design.md` for full details.
+See `docs/plans/4-done/2026-03-29-1800-architecture-decisions-design.md` for full details.
 
 Key decisions:
 - **Shared DB class**: Single `SorgvryDatabase` in `sorgvry_shared`, instantiated with platform-specific executor
@@ -32,14 +36,40 @@ Key decisions:
 - **Sync**: Timer.periodic(60s) in main isolate
 - **Backend DI**: Dart Frog middleware `provider<SorgvryDatabase>()`
 - **Auth**: JWT bearer token, deviceId in payload, `/auth/register` excluded
-- **Providers**: Repository + AsyncNotifier per module (meds, bp, water, walk)
+- **Providers**: Repository + AsyncNotifier per module (meds, bp, water, walk, media)
 - **Notifications**: Cancel-and-reschedule on every app launch
+- **Media**: Photo capture via image_picker, uploaded to MinIO, proxied through backend
+- **Web support**: Platform-specific SQLite executors (native for Android, WASM for web)
+
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/` | Health check |
+| GET | `/health` | Health status |
+| POST | `/auth/register` | Device registration (no auth) |
+| POST | `/log/meds` | Log medication |
+| POST | `/log/bp` | Log blood pressure |
+| POST | `/log/water` | Log water intake |
+| POST | `/log/walk` | Log walking |
+| POST | `/log/media` | Upload photo (multipart) |
+| GET | `/media/:key` | Proxy MinIO media file |
+| POST | `/media/index` | List uploaded media |
+| GET | `/summary` | Daily health summary |
+| GET | `/bp/history` | Blood pressure history |
+| GET | `/data-export` | CSV export of all data |
 
 ## Commands
 
 ```bash
-# Local dev (backend + app together)
+# Local dev (backend + app together in Chrome)
 ./scripts/dev.sh
+
+# Build web + APK
+./scripts/build.sh
+
+# Deploy to Pi (backend Docker, web, APK)
+./scripts/deploy.sh
 
 # Bootstrap mono-repo
 melos bootstrap
@@ -67,11 +97,21 @@ melos run format
 
 - UI language is **Afrikaans** — all user-facing strings in Afrikaans
 - Code language is **English** — variable names, comments, docs in English
-- Route paths use Afrikaans names: `/medisyne`, `/bloeddruk`, `/water`, `/stap`, `/versorger`
+- Route paths use Afrikaans names: `/medisyne`, `/bloeddruk`, `/water`, `/stap`, `/versorger`, `/versorger/dashboard`
 - Large tap targets (min 72px button height) — designed for an elderly user
 - All health data has a `synced` boolean column for offline-first tracking
 - Drift tables use unique constraints on natural keys for upsert support
 - Each health module (meds, bp, water, walk) follows the same pattern: Table → Repository → AsyncNotifier → Screen
+- Backend URL configured via `--dart-define BACKEND_URL` (defaults to localhost:8080, prod uses `/api`)
+
+## Deployment
+
+- **Host**: Raspberry Pi (`raspi-webserver`) at `/opt/sorgvry`
+- **Backend**: Docker container, port 8600 → 8080, volume at `/app/data`
+- **Web**: `https://sorgvry.phygital-tech.ai/`
+- **APK**: `https://sorgvry.phygital-tech.ai/download/sorgvry.apk`
+- **API**: `https://sorgvry.phygital-tech.ai/api/`
+- **Env vars**: `DB_PATH`, `JWT_SECRET`, `MINIO_ENDPOINT`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, `MINIO_BUCKET`
 
 ## Testing
 
