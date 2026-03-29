@@ -10,10 +10,28 @@ class SyncQueue extends Table {
   IntColumn get attempts => integer().withDefault(const Constant(0))();
 }
 
-@DriftDatabase(tables: [SyncQueue])
+class KeyValue extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
+@DriftDatabase(tables: [SyncQueue, KeyValue])
 class AppLocalDatabase extends _$AppLocalDatabase {
   AppLocalDatabase(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.createTable(keyValue);
+      }
+    },
+  );
 }
