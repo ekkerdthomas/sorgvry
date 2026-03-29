@@ -115,6 +115,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
+                childAspectRatio: 0.9,
                 mainAxisSpacing: SorgvrySpacing.gridGap,
                 crossAxisSpacing: SorgvrySpacing.gridGap,
                 children: [
@@ -206,22 +207,30 @@ class _HomeCard extends StatelessWidget {
             children: [
               Icon(icon, size: 48, color: Colors.white),
               const SizedBox(height: 8),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+              Flexible(
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
-                textAlign: TextAlign.center,
               ),
               if (subtitle != null) ...[
                 const SizedBox(height: 4),
-                Text(
-                  subtitle!,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(color: Colors.white70),
-                  textAlign: TextAlign.center,
+                Flexible(
+                  child: Text(
+                    subtitle!,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(color: Colors.white70),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
               ],
             ],
