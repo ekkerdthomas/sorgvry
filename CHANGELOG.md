@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.3.1] - 2026-03-29
+
+### app
+#### Fixed
+- Prevent text overflow on home screen cards (6d003f4)
+- Center blood pressure reading on already-measured view (00f94b9)
+
 ## [v0.3.0] - 2026-03-29
 
 ### app
