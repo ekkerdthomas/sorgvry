@@ -11,11 +11,14 @@ class MedsRepository {
 
   MedsRepository({required this.db, required this.localDb});
 
-  Future<MedsState> todayStatus() {
-    throw UnimplementedError();
+  Future<MedsState> todayStatus() async {
+    return const MedsState();
   }
 
-  Future<void> confirmMeds({required String session, required bool taken}) {
-    throw UnimplementedError();
+  Future<void> confirmMeds({
+    required String session,
+    required bool taken,
+  }) async {
+    // TODO: implement write to DB + sync queue
   }
 }

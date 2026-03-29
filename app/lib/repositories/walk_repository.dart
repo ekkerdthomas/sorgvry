@@ -11,11 +11,11 @@ class WalkRepository {
 
   WalkRepository({required this.db, required this.localDb});
 
-  Future<WalkState> todayStatus() {
-    throw UnimplementedError();
+  Future<WalkState> todayStatus() async {
+    return const WalkState();
   }
 
-  Future<void> saveWalk({required bool walked, int? durationMin}) {
-    throw UnimplementedError();
+  Future<void> saveWalk({required bool walked, int? durationMin}) async {
+    // TODO: implement write to DB + sync queue
   }
 }

@@ -11,11 +11,11 @@ class WaterRepository {
 
   WaterRepository({required this.db, required this.localDb});
 
-  Future<WaterState> todayStatus() {
-    throw UnimplementedError();
+  Future<WaterState> todayStatus() async {
+    return const WaterState();
   }
 
-  Future<void> setGlasses(int glasses) {
-    throw UnimplementedError();
+  Future<void> setGlasses(int glasses) async {
+    // TODO: implement write to DB + sync queue
   }
 }

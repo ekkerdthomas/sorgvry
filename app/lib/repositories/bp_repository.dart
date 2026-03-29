@@ -11,11 +11,14 @@ class BpRepository {
 
   BpRepository({required this.db, required this.localDb});
 
-  Future<BpState> todayStatus() {
-    throw UnimplementedError();
+  Future<BpState> todayStatus() async {
+    return const BpState();
   }
 
-  Future<void> saveReading({required int systolic, required int diastolic}) {
-    throw UnimplementedError();
+  Future<void> saveReading({
+    required int systolic,
+    required int diastolic,
+  }) async {
+    // TODO: implement write to DB + sync queue
   }
 }
