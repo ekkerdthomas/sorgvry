@@ -59,9 +59,17 @@ flutter analyze lib/ --no-fatal-infos && dart analyze phast_backend/lib/
 
 Generate conventional commit with `Co-Authored-By` trailer. **Types**: feat, fix, refactor, style, test, docs, chore, perf.
 
-### 6. Post-Commit
+### 6. Post-Commit (MANDATORY)
 
-Update progress files, archive completed plans, write session progress, append decisions. See `reference.md` for full post-commit checklist.
+1. **Archive completed plans**: If a design doc in `docs/plans/3-in-progress/` has all steps implemented by this commit, move it to `docs/plans/4-done/`:
+   ```bash
+   git mv docs/plans/3-in-progress/<design>.md docs/plans/4-done/
+   ```
+   Stage this move as part of the commit (or as an immediate follow-up commit).
+
+2. **Update progress files**: If `docs/plans/3-in-progress/*-progress.md` exists, update completed items.
+
+See `reference.md` for the full post-commit checklist (session progress, decisions log).
 
 ### 7. Verify
 

@@ -42,8 +42,18 @@ Before asking questions: read relevant CLAUDE.md files, search codebase for rela
 | 2. Understanding | _Why_ before _what_ — purpose, scope, constraints, success criteria | Clear problem statement |
 | 3. Approaches | At least 2 options with trade-offs, effort, files touched | Chosen approach |
 | 4. Design | 200-300 word sections, validated incrementally | Approved design |
-| 5. Documentation | Save to `docs/plans/1-draft/YYYY-MM-DD-HHmm-<topic>-design.md` | Design doc committed |
-| 6. Handoff | Implement now (EnterPlanMode) or park for later | Next step decided |
+| 5. Documentation | Save to `docs/plans/1-draft/YYYY-MM-DD-HHmm-<topic>-design.md` | Design doc created |
+| 6. Handoff | Move design doc to correct lifecycle stage, then implement or park | Next step decided |
+
+### Phase 6: Lifecycle Transitions (MANDATORY)
+
+When the user chooses to **implement now**:
+1. `git mv docs/plans/1-draft/<design>.md docs/plans/3-in-progress/`
+2. Enter plan mode (EnterPlanMode) with the design doc as context
+
+When the user chooses to **park for later**:
+1. `git mv docs/plans/1-draft/<design>.md docs/plans/2-approved/`
+2. Inform user the design is parked
 
 ## Key Rules
 
