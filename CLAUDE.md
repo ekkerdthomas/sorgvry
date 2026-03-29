@@ -38,6 +38,9 @@ Key decisions:
 ## Commands
 
 ```bash
+# Local dev (backend + app together)
+./scripts/dev.sh
+
 # Bootstrap mono-repo
 melos bootstrap
 

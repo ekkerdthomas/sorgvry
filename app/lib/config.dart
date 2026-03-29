@@ -2,5 +2,5 @@
 // Production Web: flutter build web --dart-define=BACKEND_URL=/api
 const backendUrl = String.fromEnvironment(
   'BACKEND_URL',
-  defaultValue: 'http://sorgvry.local:8080',
+  defaultValue: 'http://localhost:8080',
 );

@@ -16,6 +16,9 @@ melos_*.iml
 # Environment
 .env
 
+# Local dev database
+*.db
+
 # Generated (keep .g.dart files — needed for Drift)
 # .g.dart files are committed so consumers don't need build_runner
 
