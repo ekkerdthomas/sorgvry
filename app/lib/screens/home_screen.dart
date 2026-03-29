@@ -72,14 +72,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ? SorgvryColors.cardAlert
               : SorgvryColors.cardDone)
         : (hour >= 11 ? SorgvryColors.cardLate : SorgvryColors.cardPending);
-    final bpSubtitle = bpDone ? '${bpMap?.round()} MAP' : 'Nog nie gedoen';
+    final bpSubtitle = bpDone
+        ? '${bpData!.systolic}/${bpData.diastolic ?? 0} · MAP ${bpMap?.round() ?? '--'}'
+        : 'Nog nie gedoen';
 
     // Water card state
     final waterData = water.value;
     final glasses = waterData?.glasses ?? 0;
     final waterColor = glasses >= 8
         ? SorgvryColors.cardDone
-        : SorgvryColors.cardPending;
+        : SorgvryColors.waterPending;
     final waterSubtitle = '$glasses/8 glase';
 
     // Walk card state
@@ -192,6 +194,10 @@ class _HomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = color.computeLuminance() > 0.5;
+    final foreground = isLight ? Colors.black87 : Colors.white;
+    final foregroundMuted = isLight ? Colors.black54 : Colors.white70;
+
     return Card(
       color: color,
       child: InkWell(
@@ -205,13 +211,13 @@ class _HomeCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 48, color: Colors.white),
+              Icon(icon, size: 48, color: foreground),
               const SizedBox(height: 8),
               Flexible(
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.white,
+                    color: foreground,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
@@ -226,7 +232,7 @@ class _HomeCard extends StatelessWidget {
                     subtitle!,
                     style: Theme.of(
                       context,
-                    ).textTheme.bodyLarge?.copyWith(color: Colors.white70),
+                    ).textTheme.bodyLarge?.copyWith(color: foregroundMuted),
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,

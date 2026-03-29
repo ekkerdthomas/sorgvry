@@ -4,6 +4,7 @@ abstract final class SorgvryColors {
   static const primary = Color(0xFF5BA8A0);
   static const cardDone = Color(0xFF27AE60);
   static const cardPending = Color(0xFF95A5A6);
+  static const waterPending = Color(0xFFEBF5FB);
   static const cardLate = Color(0xFFE67E22);
   static const cardAlert = Color(0xFFE07A5F);
   static const background = Color(0xFFF5F2EA);
