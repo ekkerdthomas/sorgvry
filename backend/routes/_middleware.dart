@@ -16,5 +16,24 @@ Handler middleware(Handler handler) {
   return handler
       .use(authMiddleware())
       .use(provider<MinioService>((_) => _minio))
-      .use(provider<SorgvryDatabase>((_) => _db));
+      .use(provider<SorgvryDatabase>((_) => _db))
+      .use(_cors);
 }
+
+Middleware get _cors => (handler) {
+  return (context) async {
+    const headers = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+      'Access-Control-Max-Age': '86400',
+    };
+
+    if (context.request.method == HttpMethod.options) {
+      return Response(headers: headers);
+    }
+
+    final response = await handler(context);
+    return response.copyWith(headers: headers);
+  };
+};

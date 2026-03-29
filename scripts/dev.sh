@@ -12,7 +12,7 @@ echo "==> Starting backend on http://localhost:8080..."
 cd "$ROOT/backend"
 # Run generated server directly — `dart_frog dev` crashes in non-interactive shells
 # due to StdinException on echoMode. Regenerate with `dart_frog build` if routes change.
-dart run .dart_frog/server.dart &
+dart run build/bin/server.dart &
 BACKEND_PID=$!
 
 cleanup() {
