@@ -97,6 +97,11 @@ class WaterScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   const PhotoCaptureButton(module: 'water', compact: true),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () => context.go('/'),
+                    child: const Text('KLAAR'),
+                  ),
                 ],
                 const Spacer(flex: 2),
               ],
