@@ -197,7 +197,10 @@ class _HomeCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(SorgvrySpacing.cardRadius),
         child: Padding(
-          padding: const EdgeInsets.all(SorgvrySpacing.cardPadding),
+          padding: const EdgeInsets.symmetric(
+            horizontal: SorgvrySpacing.cardPadding,
+            vertical: 12,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
