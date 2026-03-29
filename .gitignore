@@ -23,3 +23,8 @@ melos_*.iml
 .claude/session-files-*.txt
 .claude/hooks/failure-patterns/__pycache__/
 .claude/projects/
+.claude/compaction.log
+.claude/session-metrics.log
+
+# Playwright MCP
+.playwright-mcp/
