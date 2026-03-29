@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../providers/meds_providers.dart';
 import '../theme.dart';
 import '../utils/b12.dart';
+import '../widgets/photo_capture_button.dart';
 
 class _MedInfo {
   final String name;
@@ -171,6 +172,8 @@ class MedsScreen extends ConsumerWidget {
                               : 'Klaar',
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
+                        const SizedBox(height: 16),
+                        PhotoCaptureButton(module: 'meds', session: session),
                         if (canUndo) ...[
                           const SizedBox(height: 16),
                           TextButton(

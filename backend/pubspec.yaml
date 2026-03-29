@@ -17,6 +17,7 @@ dependencies:
   dart_jsonwebtoken: ^2.16.0
   mailer: ^6.2.1
   cron: ^0.6.1
+  minio: ^3.5.8
 
 dev_dependencies:
   dart_frog_lint: ^0.1.0

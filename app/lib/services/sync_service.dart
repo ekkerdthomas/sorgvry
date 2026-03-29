@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
@@ -45,6 +46,7 @@ class SyncService {
       await _syncBp();
       await _syncWater();
       await _syncWalk();
+      await _syncMedia();
     } catch (_) {
       // auth or network failure, retry next cycle
     } finally {
@@ -219,6 +221,80 @@ class SyncService {
         }
       } catch (e) {
         debugPrint('Sync error: $e');
+      }
+    }
+  }
+
+  // -- Media sync --------------------------------------------------------------
+
+  /// Posts a multipart request and returns the decoded JSON body on success,
+  /// or null on failure.
+  Future<Map<String, dynamic>?> _postMultipart(
+    String endpoint,
+    Map<String, String> fields,
+    String filePath,
+  ) async {
+    final request =
+        http.MultipartRequest('POST', Uri.parse('$baseUrl$endpoint'))
+          ..headers['Authorization'] = 'Bearer $_token'
+          ..fields.addAll(fields)
+          ..files.add(await http.MultipartFile.fromPath('file', filePath));
+
+    final streamed = await _client.send(request);
+    final resp = await http.Response.fromStream(streamed);
+
+    if (resp.statusCode == 401) {
+      _token = null;
+      await (localDb.delete(
+        localDb.keyValue,
+      )..where((t) => t.key.equals('auth_token'))).go();
+      throw Exception('Token expired');
+    }
+    if (resp.statusCode == 200) {
+      return jsonDecode(resp.body) as Map<String, dynamic>;
+    }
+    return null;
+  }
+
+  Future<void> _syncMedia() async {
+    final rows =
+        await (healthDb.select(healthDb.mediaAttachments)
+              ..where((t) => t.synced.equals(false))
+              ..limit(10))
+            .get();
+    for (final row in rows) {
+      try {
+        final file = File(row.localPath);
+        if (!file.existsSync()) {
+          debugPrint('Media file missing, skipping: ${row.localPath}');
+          await (healthDb.update(healthDb.mediaAttachments)
+                ..where((t) => t.id.equals(row.id)))
+              .write(const MediaAttachmentsCompanion(synced: Value(true)));
+          continue;
+        }
+
+        final fields = MediaUploadFields(
+          deviceId: row.deviceId,
+          date: _dateStr(row.date),
+          module: row.module,
+          session: row.session,
+          loggedAt: row.loggedAt.toIso8601String(),
+        ).toFields();
+
+        final resp = await _postMultipart('/log/media', fields, row.localPath);
+        if (resp != null) {
+          final objectKey = resp['objectKey'] as String;
+          await (healthDb.update(
+            healthDb.mediaAttachments,
+          )..where((t) => t.id.equals(row.id))).write(
+            MediaAttachmentsCompanion(
+              synced: const Value(true),
+              objectKey: Value(objectKey),
+            ),
+          );
+        }
+      } catch (e) {
+        debugPrint('Media sync error: $e');
       }
     }
   }

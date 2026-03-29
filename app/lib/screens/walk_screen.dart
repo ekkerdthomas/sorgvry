@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/walk_providers.dart';
 import '../theme.dart';
+import '../widgets/photo_capture_button.dart';
 
 class WalkScreen extends ConsumerStatefulWidget {
   const WalkScreen({super.key});
@@ -26,10 +27,6 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
       return;
     }
     setState(() => _saved = true);
-    if (mounted) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (mounted) context.go('/');
-    }
   }
 
   @override
@@ -64,6 +61,15 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
                           : 'Gestap vandag',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
+                    if (_saved) ...[
+                      const SizedBox(height: 24),
+                      const PhotoCaptureButton(module: 'walk'),
+                      const SizedBox(height: 16),
+                      FilledButton(
+                        onPressed: () => context.go('/'),
+                        child: const Text('KLAAR'),
+                      ),
+                    ],
                   ],
                 ),
               );

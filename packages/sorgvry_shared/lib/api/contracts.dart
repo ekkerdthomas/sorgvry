@@ -169,6 +169,40 @@ class RegisterResponse {
   Map<String, dynamic> toJson() => {'token': token, 'deviceId': deviceId};
 }
 
+class MediaUploadFields {
+  final String deviceId;
+  final String date;
+  final String module;
+  final String? session;
+  final String loggedAt;
+
+  const MediaUploadFields({
+    required this.deviceId,
+    required this.date,
+    required this.module,
+    this.session,
+    required this.loggedAt,
+  });
+
+  Map<String, String> toFields() => {
+    'deviceId': deviceId,
+    'date': date,
+    'module': module,
+    if (session != null) 'session': session!,
+    'loggedAt': loggedAt,
+  };
+
+  factory MediaUploadFields.fromFields(Map<String, String> fields) {
+    return MediaUploadFields(
+      deviceId: fields['deviceId']!,
+      date: fields['date']!,
+      module: fields['module']!,
+      session: fields['session'],
+      loggedAt: fields['loggedAt']!,
+    );
+  }
+}
+
 class OkResponse {
   final bool ok;
 

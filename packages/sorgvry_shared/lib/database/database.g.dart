@@ -1814,6 +1814,554 @@ class WalkLogsCompanion extends UpdateCompanion<WalkLog> {
   }
 }
 
+class $MediaAttachmentsTable extends MediaAttachments
+    with TableInfo<$MediaAttachmentsTable, MediaAttachment> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MediaAttachmentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _moduleMeta = const VerificationMeta('module');
+  @override
+  late final GeneratedColumn<String> module = GeneratedColumn<String>(
+    'module',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sessionMeta = const VerificationMeta(
+    'session',
+  );
+  @override
+  late final GeneratedColumn<String> session = GeneratedColumn<String>(
+    'session',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('none'),
+  );
+  static const VerificationMeta _localPathMeta = const VerificationMeta(
+    'localPath',
+  );
+  @override
+  late final GeneratedColumn<String> localPath = GeneratedColumn<String>(
+    'local_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _objectKeyMeta = const VerificationMeta(
+    'objectKey',
+  );
+  @override
+  late final GeneratedColumn<String> objectKey = GeneratedColumn<String>(
+    'object_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _loggedAtMeta = const VerificationMeta(
+    'loggedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> loggedAt = GeneratedColumn<DateTime>(
+    'logged_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    deviceId,
+    date,
+    module,
+    session,
+    localPath,
+    objectKey,
+    loggedAt,
+    synced,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'media_attachments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MediaAttachment> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('module')) {
+      context.handle(
+        _moduleMeta,
+        module.isAcceptableOrUnknown(data['module']!, _moduleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_moduleMeta);
+    }
+    if (data.containsKey('session')) {
+      context.handle(
+        _sessionMeta,
+        session.isAcceptableOrUnknown(data['session']!, _sessionMeta),
+      );
+    }
+    if (data.containsKey('local_path')) {
+      context.handle(
+        _localPathMeta,
+        localPath.isAcceptableOrUnknown(data['local_path']!, _localPathMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_localPathMeta);
+    }
+    if (data.containsKey('object_key')) {
+      context.handle(
+        _objectKeyMeta,
+        objectKey.isAcceptableOrUnknown(data['object_key']!, _objectKeyMeta),
+      );
+    }
+    if (data.containsKey('logged_at')) {
+      context.handle(
+        _loggedAtMeta,
+        loggedAt.isAcceptableOrUnknown(data['logged_at']!, _loggedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_loggedAtMeta);
+    }
+    if (data.containsKey('synced')) {
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {deviceId, date, module, session},
+  ];
+  @override
+  MediaAttachment map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MediaAttachment(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+      module: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}module'],
+      )!,
+      session: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}session'],
+      )!,
+      localPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_path'],
+      )!,
+      objectKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}object_key'],
+      ),
+      loggedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}logged_at'],
+      )!,
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
+    );
+  }
+
+  @override
+  $MediaAttachmentsTable createAlias(String alias) {
+    return $MediaAttachmentsTable(attachedDatabase, alias);
+  }
+}
+
+class MediaAttachment extends DataClass implements Insertable<MediaAttachment> {
+  final int id;
+  final String deviceId;
+  final DateTime date;
+  final String module;
+  final String session;
+  final String localPath;
+  final String? objectKey;
+  final DateTime loggedAt;
+  final bool synced;
+  const MediaAttachment({
+    required this.id,
+    required this.deviceId,
+    required this.date,
+    required this.module,
+    required this.session,
+    required this.localPath,
+    this.objectKey,
+    required this.loggedAt,
+    required this.synced,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['device_id'] = Variable<String>(deviceId);
+    map['date'] = Variable<DateTime>(date);
+    map['module'] = Variable<String>(module);
+    map['session'] = Variable<String>(session);
+    map['local_path'] = Variable<String>(localPath);
+    if (!nullToAbsent || objectKey != null) {
+      map['object_key'] = Variable<String>(objectKey);
+    }
+    map['logged_at'] = Variable<DateTime>(loggedAt);
+    map['synced'] = Variable<bool>(synced);
+    return map;
+  }
+
+  MediaAttachmentsCompanion toCompanion(bool nullToAbsent) {
+    return MediaAttachmentsCompanion(
+      id: Value(id),
+      deviceId: Value(deviceId),
+      date: Value(date),
+      module: Value(module),
+      session: Value(session),
+      localPath: Value(localPath),
+      objectKey: objectKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(objectKey),
+      loggedAt: Value(loggedAt),
+      synced: Value(synced),
+    );
+  }
+
+  factory MediaAttachment.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MediaAttachment(
+      id: serializer.fromJson<int>(json['id']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      module: serializer.fromJson<String>(json['module']),
+      session: serializer.fromJson<String>(json['session']),
+      localPath: serializer.fromJson<String>(json['localPath']),
+      objectKey: serializer.fromJson<String?>(json['objectKey']),
+      loggedAt: serializer.fromJson<DateTime>(json['loggedAt']),
+      synced: serializer.fromJson<bool>(json['synced']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'date': serializer.toJson<DateTime>(date),
+      'module': serializer.toJson<String>(module),
+      'session': serializer.toJson<String>(session),
+      'localPath': serializer.toJson<String>(localPath),
+      'objectKey': serializer.toJson<String?>(objectKey),
+      'loggedAt': serializer.toJson<DateTime>(loggedAt),
+      'synced': serializer.toJson<bool>(synced),
+    };
+  }
+
+  MediaAttachment copyWith({
+    int? id,
+    String? deviceId,
+    DateTime? date,
+    String? module,
+    String? session,
+    String? localPath,
+    Value<String?> objectKey = const Value.absent(),
+    DateTime? loggedAt,
+    bool? synced,
+  }) => MediaAttachment(
+    id: id ?? this.id,
+    deviceId: deviceId ?? this.deviceId,
+    date: date ?? this.date,
+    module: module ?? this.module,
+    session: session ?? this.session,
+    localPath: localPath ?? this.localPath,
+    objectKey: objectKey.present ? objectKey.value : this.objectKey,
+    loggedAt: loggedAt ?? this.loggedAt,
+    synced: synced ?? this.synced,
+  );
+  MediaAttachment copyWithCompanion(MediaAttachmentsCompanion data) {
+    return MediaAttachment(
+      id: data.id.present ? data.id.value : this.id,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      date: data.date.present ? data.date.value : this.date,
+      module: data.module.present ? data.module.value : this.module,
+      session: data.session.present ? data.session.value : this.session,
+      localPath: data.localPath.present ? data.localPath.value : this.localPath,
+      objectKey: data.objectKey.present ? data.objectKey.value : this.objectKey,
+      loggedAt: data.loggedAt.present ? data.loggedAt.value : this.loggedAt,
+      synced: data.synced.present ? data.synced.value : this.synced,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MediaAttachment(')
+          ..write('id: $id, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('date: $date, ')
+          ..write('module: $module, ')
+          ..write('session: $session, ')
+          ..write('localPath: $localPath, ')
+          ..write('objectKey: $objectKey, ')
+          ..write('loggedAt: $loggedAt, ')
+          ..write('synced: $synced')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    deviceId,
+    date,
+    module,
+    session,
+    localPath,
+    objectKey,
+    loggedAt,
+    synced,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MediaAttachment &&
+          other.id == this.id &&
+          other.deviceId == this.deviceId &&
+          other.date == this.date &&
+          other.module == this.module &&
+          other.session == this.session &&
+          other.localPath == this.localPath &&
+          other.objectKey == this.objectKey &&
+          other.loggedAt == this.loggedAt &&
+          other.synced == this.synced);
+}
+
+class MediaAttachmentsCompanion extends UpdateCompanion<MediaAttachment> {
+  final Value<int> id;
+  final Value<String> deviceId;
+  final Value<DateTime> date;
+  final Value<String> module;
+  final Value<String> session;
+  final Value<String> localPath;
+  final Value<String?> objectKey;
+  final Value<DateTime> loggedAt;
+  final Value<bool> synced;
+  const MediaAttachmentsCompanion({
+    this.id = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.date = const Value.absent(),
+    this.module = const Value.absent(),
+    this.session = const Value.absent(),
+    this.localPath = const Value.absent(),
+    this.objectKey = const Value.absent(),
+    this.loggedAt = const Value.absent(),
+    this.synced = const Value.absent(),
+  });
+  MediaAttachmentsCompanion.insert({
+    this.id = const Value.absent(),
+    required String deviceId,
+    required DateTime date,
+    required String module,
+    this.session = const Value.absent(),
+    required String localPath,
+    this.objectKey = const Value.absent(),
+    required DateTime loggedAt,
+    this.synced = const Value.absent(),
+  }) : deviceId = Value(deviceId),
+       date = Value(date),
+       module = Value(module),
+       localPath = Value(localPath),
+       loggedAt = Value(loggedAt);
+  static Insertable<MediaAttachment> custom({
+    Expression<int>? id,
+    Expression<String>? deviceId,
+    Expression<DateTime>? date,
+    Expression<String>? module,
+    Expression<String>? session,
+    Expression<String>? localPath,
+    Expression<String>? objectKey,
+    Expression<DateTime>? loggedAt,
+    Expression<bool>? synced,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (deviceId != null) 'device_id': deviceId,
+      if (date != null) 'date': date,
+      if (module != null) 'module': module,
+      if (session != null) 'session': session,
+      if (localPath != null) 'local_path': localPath,
+      if (objectKey != null) 'object_key': objectKey,
+      if (loggedAt != null) 'logged_at': loggedAt,
+      if (synced != null) 'synced': synced,
+    });
+  }
+
+  MediaAttachmentsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? deviceId,
+    Value<DateTime>? date,
+    Value<String>? module,
+    Value<String>? session,
+    Value<String>? localPath,
+    Value<String?>? objectKey,
+    Value<DateTime>? loggedAt,
+    Value<bool>? synced,
+  }) {
+    return MediaAttachmentsCompanion(
+      id: id ?? this.id,
+      deviceId: deviceId ?? this.deviceId,
+      date: date ?? this.date,
+      module: module ?? this.module,
+      session: session ?? this.session,
+      localPath: localPath ?? this.localPath,
+      objectKey: objectKey ?? this.objectKey,
+      loggedAt: loggedAt ?? this.loggedAt,
+      synced: synced ?? this.synced,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (module.present) {
+      map['module'] = Variable<String>(module.value);
+    }
+    if (session.present) {
+      map['session'] = Variable<String>(session.value);
+    }
+    if (localPath.present) {
+      map['local_path'] = Variable<String>(localPath.value);
+    }
+    if (objectKey.present) {
+      map['object_key'] = Variable<String>(objectKey.value);
+    }
+    if (loggedAt.present) {
+      map['logged_at'] = Variable<DateTime>(loggedAt.value);
+    }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MediaAttachmentsCompanion(')
+          ..write('id: $id, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('date: $date, ')
+          ..write('module: $module, ')
+          ..write('session: $session, ')
+          ..write('localPath: $localPath, ')
+          ..write('objectKey: $objectKey, ')
+          ..write('loggedAt: $loggedAt, ')
+          ..write('synced: $synced')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $DevicesTable extends Devices with TableInfo<$DevicesTable, Device> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -2189,6 +2737,9 @@ abstract class _$SorgvryDatabase extends GeneratedDatabase {
   late final $BpReadingsTable bpReadings = $BpReadingsTable(this);
   late final $WaterLogsTable waterLogs = $WaterLogsTable(this);
   late final $WalkLogsTable walkLogs = $WalkLogsTable(this);
+  late final $MediaAttachmentsTable mediaAttachments = $MediaAttachmentsTable(
+    this,
+  );
   late final $DevicesTable devices = $DevicesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -2199,6 +2750,7 @@ abstract class _$SorgvryDatabase extends GeneratedDatabase {
     bpReadings,
     waterLogs,
     walkLogs,
+    mediaAttachments,
     devices,
   ];
 }
@@ -3120,6 +3672,286 @@ typedef $$WalkLogsTableProcessedTableManager =
       WalkLog,
       PrefetchHooks Function()
     >;
+typedef $$MediaAttachmentsTableCreateCompanionBuilder =
+    MediaAttachmentsCompanion Function({
+      Value<int> id,
+      required String deviceId,
+      required DateTime date,
+      required String module,
+      Value<String> session,
+      required String localPath,
+      Value<String?> objectKey,
+      required DateTime loggedAt,
+      Value<bool> synced,
+    });
+typedef $$MediaAttachmentsTableUpdateCompanionBuilder =
+    MediaAttachmentsCompanion Function({
+      Value<int> id,
+      Value<String> deviceId,
+      Value<DateTime> date,
+      Value<String> module,
+      Value<String> session,
+      Value<String> localPath,
+      Value<String?> objectKey,
+      Value<DateTime> loggedAt,
+      Value<bool> synced,
+    });
+
+class $$MediaAttachmentsTableFilterComposer
+    extends Composer<_$SorgvryDatabase, $MediaAttachmentsTable> {
+  $$MediaAttachmentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get module => $composableBuilder(
+    column: $table.module,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get session => $composableBuilder(
+    column: $table.session,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localPath => $composableBuilder(
+    column: $table.localPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get objectKey => $composableBuilder(
+    column: $table.objectKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get loggedAt => $composableBuilder(
+    column: $table.loggedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$MediaAttachmentsTableOrderingComposer
+    extends Composer<_$SorgvryDatabase, $MediaAttachmentsTable> {
+  $$MediaAttachmentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get module => $composableBuilder(
+    column: $table.module,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get session => $composableBuilder(
+    column: $table.session,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get localPath => $composableBuilder(
+    column: $table.localPath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get objectKey => $composableBuilder(
+    column: $table.objectKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get loggedAt => $composableBuilder(
+    column: $table.loggedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$MediaAttachmentsTableAnnotationComposer
+    extends Composer<_$SorgvryDatabase, $MediaAttachmentsTable> {
+  $$MediaAttachmentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get module =>
+      $composableBuilder(column: $table.module, builder: (column) => column);
+
+  GeneratedColumn<String> get session =>
+      $composableBuilder(column: $table.session, builder: (column) => column);
+
+  GeneratedColumn<String> get localPath =>
+      $composableBuilder(column: $table.localPath, builder: (column) => column);
+
+  GeneratedColumn<String> get objectKey =>
+      $composableBuilder(column: $table.objectKey, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get loggedAt =>
+      $composableBuilder(column: $table.loggedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+}
+
+class $$MediaAttachmentsTableTableManager
+    extends
+        RootTableManager<
+          _$SorgvryDatabase,
+          $MediaAttachmentsTable,
+          MediaAttachment,
+          $$MediaAttachmentsTableFilterComposer,
+          $$MediaAttachmentsTableOrderingComposer,
+          $$MediaAttachmentsTableAnnotationComposer,
+          $$MediaAttachmentsTableCreateCompanionBuilder,
+          $$MediaAttachmentsTableUpdateCompanionBuilder,
+          (
+            MediaAttachment,
+            BaseReferences<
+              _$SorgvryDatabase,
+              $MediaAttachmentsTable,
+              MediaAttachment
+            >,
+          ),
+          MediaAttachment,
+          PrefetchHooks Function()
+        > {
+  $$MediaAttachmentsTableTableManager(
+    _$SorgvryDatabase db,
+    $MediaAttachmentsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MediaAttachmentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MediaAttachmentsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MediaAttachmentsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<DateTime> date = const Value.absent(),
+                Value<String> module = const Value.absent(),
+                Value<String> session = const Value.absent(),
+                Value<String> localPath = const Value.absent(),
+                Value<String?> objectKey = const Value.absent(),
+                Value<DateTime> loggedAt = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+              }) => MediaAttachmentsCompanion(
+                id: id,
+                deviceId: deviceId,
+                date: date,
+                module: module,
+                session: session,
+                localPath: localPath,
+                objectKey: objectKey,
+                loggedAt: loggedAt,
+                synced: synced,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String deviceId,
+                required DateTime date,
+                required String module,
+                Value<String> session = const Value.absent(),
+                required String localPath,
+                Value<String?> objectKey = const Value.absent(),
+                required DateTime loggedAt,
+                Value<bool> synced = const Value.absent(),
+              }) => MediaAttachmentsCompanion.insert(
+                id: id,
+                deviceId: deviceId,
+                date: date,
+                module: module,
+                session: session,
+                localPath: localPath,
+                objectKey: objectKey,
+                loggedAt: loggedAt,
+                synced: synced,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$MediaAttachmentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$SorgvryDatabase,
+      $MediaAttachmentsTable,
+      MediaAttachment,
+      $$MediaAttachmentsTableFilterComposer,
+      $$MediaAttachmentsTableOrderingComposer,
+      $$MediaAttachmentsTableAnnotationComposer,
+      $$MediaAttachmentsTableCreateCompanionBuilder,
+      $$MediaAttachmentsTableUpdateCompanionBuilder,
+      (
+        MediaAttachment,
+        BaseReferences<
+          _$SorgvryDatabase,
+          $MediaAttachmentsTable,
+          MediaAttachment
+        >,
+      ),
+      MediaAttachment,
+      PrefetchHooks Function()
+    >;
 typedef $$DevicesTableCreateCompanionBuilder =
     DevicesCompanion Function({
       required String id,
@@ -3330,6 +4162,8 @@ class $SorgvryDatabaseManager {
       $$WaterLogsTableTableManager(_db, _db.waterLogs);
   $$WalkLogsTableTableManager get walkLogs =>
       $$WalkLogsTableTableManager(_db, _db.walkLogs);
+  $$MediaAttachmentsTableTableManager get mediaAttachments =>
+      $$MediaAttachmentsTableTableManager(_db, _db.mediaAttachments);
   $$DevicesTableTableManager get devices =>
       $$DevicesTableTableManager(_db, _db.devices);
 }

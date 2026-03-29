@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/water_providers.dart';
 import '../theme.dart';
+import '../widgets/photo_capture_button.dart';
 
 class WaterScreen extends ConsumerWidget {
   const WaterScreen({super.key});
@@ -84,7 +85,7 @@ class WaterScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                if (glasses > 0)
+                if (glasses > 0) ...[
                   TextButton.icon(
                     onPressed: () {
                       ref
@@ -94,6 +95,9 @@ class WaterScreen extends ConsumerWidget {
                     icon: const Icon(Icons.remove_circle_outline),
                     label: const Text('Een minder'),
                   ),
+                  const SizedBox(height: 16),
+                  const PhotoCaptureButton(module: 'water', compact: true),
+                ],
                 const Spacer(flex: 2),
               ],
             );

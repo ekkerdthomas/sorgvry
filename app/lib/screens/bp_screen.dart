@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/bp_providers.dart';
 import '../theme.dart';
 import '../widgets/numeric_keypad.dart';
+import '../widgets/photo_capture_button.dart';
 
 class BpScreen extends ConsumerStatefulWidget {
   const BpScreen({super.key});
@@ -94,10 +95,6 @@ class _BpScreenState extends ConsumerState<BpScreen> {
 
     await ref.read(bpNotifierProvider.notifier).save(systolic: s, diastolic: d);
     setState(() => _saved = true);
-    if (mounted) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (mounted) context.go('/');
-    }
   }
 
   @override
@@ -105,7 +102,7 @@ class _BpScreenState extends ConsumerState<BpScreen> {
     final bpAsync = ref.watch(bpNotifierProvider);
     final existingReading = bpAsync.value;
 
-    if (existingReading != null && existingReading.hasReading && !_saved) {
+    if (existingReading != null && existingReading.hasReading) {
       return Scaffold(
         appBar: AppBar(
           leading: BackButton(onPressed: () => context.go('/')),
@@ -128,10 +125,19 @@ class _BpScreenState extends ConsumerState<BpScreen> {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 24),
-              Text(
-                'Reeds vandag gemeet',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+              if (!_saved)
+                Text(
+                  'Reeds vandag gemeet',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              if (_saved) ...[
+                const PhotoCaptureButton(module: 'bp'),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: () => context.go('/'),
+                  child: const Text('KLAAR'),
+                ),
+              ],
             ],
           ),
         ),

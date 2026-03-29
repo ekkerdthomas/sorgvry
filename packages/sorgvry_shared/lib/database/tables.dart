@@ -61,6 +61,25 @@ class WalkLogs extends Table {
   ];
 }
 
+class MediaAttachments extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get deviceId => text()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get module => text()(); // bp, meds, water, walk
+  TextColumn get session => text().withDefault(
+    const Constant('none'),
+  )(); // morning, evening, b12, or 'none'
+  TextColumn get localPath => text()();
+  TextColumn get objectKey => text().nullable()();
+  DateTimeColumn get loggedAt => dateTime()();
+  BoolColumn get synced => boolean().withDefault(const Constant(false))();
+
+  @override
+  List<Set<Column>> get uniqueKeys => [
+    {deviceId, date, module, session},
+  ];
+}
+
 class Devices extends Table {
   TextColumn get id => text()();
   TextColumn get patientName => text()();
