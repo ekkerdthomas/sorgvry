@@ -10,7 +10,7 @@ class CaregiverDashboardScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/')),
-        title: const Text('Versorger Dashboard'),
+        title: Image.asset('assets/logo_with_title.png', height: 32),
       ),
       body: const Center(child: Text('Dashboard — placeholder')),
     );

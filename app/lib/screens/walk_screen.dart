@@ -39,7 +39,7 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/')),
-        title: const Text('Stap'),
+        title: Image.asset('assets/logo_with_title.png', height: 32),
       ),
       body: Padding(
         padding: const EdgeInsets.all(SorgvrySpacing.cardPadding),

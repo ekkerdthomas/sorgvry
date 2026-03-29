@@ -37,7 +37,7 @@ class MedsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/')),
-        title: Text(_title),
+        title: Image.asset('assets/logo_with_title.png', height: 32),
       ),
       body: Padding(
         padding: const EdgeInsets.all(SorgvrySpacing.cardPadding),

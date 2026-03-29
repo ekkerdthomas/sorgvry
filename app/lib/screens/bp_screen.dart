@@ -108,7 +108,7 @@ class _BpScreenState extends ConsumerState<BpScreen> {
       return Scaffold(
         appBar: AppBar(
           leading: BackButton(onPressed: () => context.go('/')),
-          title: const Text('Bloeddruk'),
+          title: Image.asset('assets/logo_with_title.png', height: 32),
         ),
         body: Padding(
           padding: const EdgeInsets.all(SorgvrySpacing.cardPadding),
@@ -140,7 +140,9 @@ class _BpScreenState extends ConsumerState<BpScreen> {
     final map = _map;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Bloeddruk')),
+      appBar: AppBar(
+        title: Image.asset('assets/logo_with_title.png', height: 32),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(SorgvrySpacing.cardPadding),
         child: Column(

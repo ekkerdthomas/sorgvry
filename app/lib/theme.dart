@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 abstract final class SorgvryColors {
-  static const primary = Color(0xFFC0392B);
+  static const primary = Color(0xFF5BA8A0);
+  static const accent = Color(0xFFE07A5F);
+  static const leaf = Color(0xFF7FB069);
   static const cardDone = Color(0xFF27AE60);
   static const cardPending = Color(0xFF95A5A6);
   static const cardLate = Color(0xFFE67E22);
-  static const cardAlert = Color(0xFFC0392B);
-  static const background = Color(0xFFF5F5F5);
+  static const cardAlert = Color(0xFFE07A5F);
+  static const background = Color(0xFFF5F2EA);
   static const surface = Color(0xFFFFFFFF);
 }
 

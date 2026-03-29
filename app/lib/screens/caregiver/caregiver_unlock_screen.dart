@@ -10,7 +10,7 @@ class CaregiverUnlockScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go('/')),
-        title: const Text('Versorger'),
+        title: Image.asset('assets/logo_with_title.png', height: 32),
       ),
       body: const Center(child: Text('PIN invoer — placeholder')),
     );
