@@ -12,7 +12,14 @@
       "command": "npx",
       "args": [
         "-y",
-        "@anthropic-ai/chrome-devtools-mcp@latest"
+        "chrome-devtools-mcp@latest"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
       ]
     }
   }
