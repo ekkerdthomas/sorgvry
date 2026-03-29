@@ -1,5 +1,20 @@
 # Changelog
 
+## [v0.4.0] - 2026-03-29
+
+### app
+#### Added
+- Redesign BP confirmation screen with colour-coded MAP status block (54a9327)
+- Add KLAAR button to meds and water screens for consistent navigation (6c78d39)
+- Add light blue tint to water card for visual context (1a7007c)
+
+#### Fixed
+- Centre BP reading on already-measured view (2d8d315)
+
+### backend
+#### Added
+- Add CORS middleware for local dev E2E sync (89d66ae)
+
 ## [v0.3.1] - 2026-03-29
 
 ### app
