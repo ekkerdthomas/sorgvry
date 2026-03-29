@@ -45,6 +45,19 @@ void main() {
   }
 
   group('GET /summary', () {
+    test('defaults to today (UTC) when no date param given', () async {
+      final now = DateTime.now().toUtc();
+      final todayStr =
+          '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+
+      final ctx = buildContext();
+      final response = await route.onRequest(ctx);
+
+      expect(response.statusCode, HttpStatus.ok);
+      final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+      expect(body['date'], todayStr);
+    });
+
     test('returns empty data for a date with no records', () async {
       final ctx = buildContext(date: '2026-04-01');
       final response = await route.onRequest(ctx);
@@ -62,7 +75,7 @@ void main() {
     });
 
     test('returns meds data when morning and night are logged', () async {
-      final date = DateTime(2026, 4);
+      final date = DateTime.utc(2026, 4);
       await db
           .into(db.medLogs)
           .insert(
@@ -71,7 +84,7 @@ void main() {
               date: Value(date),
               session: const Value('morning'),
               taken: const Value(true),
-              loggedAt: Value(DateTime(2026, 4, 1, 7, 14)),
+              loggedAt: Value(DateTime.utc(2026, 4, 1, 7, 14)),
               synced: const Value(true),
             ),
           );
@@ -83,7 +96,7 @@ void main() {
               date: Value(date),
               session: const Value('night'),
               taken: const Value(true),
-              loggedAt: Value(DateTime(2026, 4, 1, 20, 30)),
+              loggedAt: Value(DateTime.utc(2026, 4, 1, 20, 30)),
               synced: const Value(true),
             ),
           );
@@ -97,7 +110,7 @@ void main() {
     });
 
     test('returns BP reading when logged', () async {
-      final date = DateTime(2026, 4);
+      final date = DateTime.utc(2026, 4);
       await db
           .into(db.bpReadings)
           .insert(
@@ -107,7 +120,7 @@ void main() {
               systolic: const Value(148),
               diastolic: const Value(88),
               meanArterialPressure: const Value(108),
-              loggedAt: Value(DateTime(2026, 4, 1, 8, 32)),
+              loggedAt: Value(DateTime.utc(2026, 4, 1, 8, 32)),
               synced: const Value(true),
             ),
           );
@@ -123,7 +136,7 @@ void main() {
     });
 
     test('returns water and walk data when logged', () async {
-      final date = DateTime(2026, 4);
+      final date = DateTime.utc(2026, 4);
       await db
           .into(db.waterLogs)
           .insert(
@@ -175,7 +188,7 @@ void main() {
     });
 
     test('B12 taken is true when logged on injection day', () async {
-      final date = DateTime(2026, 3, 27);
+      final date = DateTime.utc(2026, 3, 27);
       await db
           .into(db.medLogs)
           .insert(
@@ -184,7 +197,7 @@ void main() {
               date: Value(date),
               session: const Value('b12'),
               taken: const Value(true),
-              loggedAt: Value(DateTime(2026, 3, 27, 9)),
+              loggedAt: Value(DateTime.utc(2026, 3, 27, 9)),
               synced: const Value(true),
             ),
           );

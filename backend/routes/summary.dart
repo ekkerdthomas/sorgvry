@@ -6,7 +6,7 @@ import 'package:sorgvry_backend/middleware/auth.dart';
 import 'package:sorgvry_shared/sorgvry_shared.dart';
 
 /// B12 injection start date per spec (section 10).
-final _b12StartDate = DateTime(2026, 3, 27);
+final _b12StartDate = DateTime.utc(2026, 3, 27);
 
 /// Returns true if [date] falls on a B12 injection day (every 14 days).
 bool _isB12Day(DateTime date) {
@@ -14,9 +14,11 @@ bool _isB12Day(DateTime date) {
   return diff >= 0 && diff % 14 == 0;
 }
 
-/// Formats a [DateTime] as "HH:mm" (24-hour).
-String _timeOf(DateTime dt) =>
-    '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+/// Formats a [DateTime] as "HH:mm" (24-hour, UTC).
+String _timeOf(DateTime dt) {
+  final u = dt.toUtc();
+  return '${u.hour.toString().padLeft(2, '0')}:${u.minute.toString().padLeft(2, '0')}';
+}
 
 Future<Response> onRequest(RequestContext context) async {
   if (context.request.method != HttpMethod.get) {
@@ -29,8 +31,10 @@ Future<Response> onRequest(RequestContext context) async {
 
     // Parse date query parameter, default to today (midnight-normalised).
     final dateParam = context.request.uri.queryParameters['date'];
-    final date = dateParam != null ? DateTime.parse(dateParam) : DateTime.now();
-    final normalised = DateTime(date.year, date.month, date.day);
+    final date = dateParam != null
+        ? DateTime.parse(dateParam)
+        : DateTime.now().toUtc();
+    final normalised = DateTime.utc(date.year, date.month, date.day);
 
     // --- Meds ---
     final medRows =
