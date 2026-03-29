@@ -13,7 +13,19 @@ model: opus
 
 ## Steps
 
-### 1. Find Base Reference
+### 1. Clean Working Tree Check (HARD GATE)
+
+```bash
+git status --porcelain
+```
+
+If there are uncommitted changes, **block versioning**:
+
+```
+[BLOCK] Working tree has uncommitted changes. Run /commit first.
+```
+
+### 2. Find Base Reference
 
 ```bash
 git tag -l 'v*' --sort=-v:refname | head -1
@@ -25,7 +37,7 @@ If no `v*` tag exists, fall back to the initial commit:
 git rev-list --max-parents=0 HEAD
 ```
 
-### 2. Collect and Classify Commits
+### 3. Collect and Classify Commits
 
 ```bash
 git log <base>..HEAD --format="COMMIT:%H|||%s|||%b" --name-only
@@ -36,7 +48,7 @@ For each commit, parse:
 - **Breaking** flag: `!` after type OR `BREAKING CHANGE` in body
 - **Packages touched**: map changed file paths to packages by prefix
 
-### 3. Map Paths to Packages
+### 4. Map Paths to Packages
 
 | Path prefix | Package |
 |-------------|---------|
@@ -47,7 +59,7 @@ For each commit, parse:
 
 A commit touching multiple packages counts toward all matched packages.
 
-### 4. Determine Bump Severity Per Package
+### 5. Determine Bump Severity Per Package
 
 | Commit type | Severity |
 |-------------|----------|
@@ -57,7 +69,7 @@ A commit touching multiple packages counts toward all matched packages.
 
 Take the **highest** severity per package. Packages with no commits get no bump.
 
-### 5. Calculate New Versions
+### 6. Calculate New Versions
 
 Read current versions from `pubspec.yaml` in each package. Apply bump:
 
@@ -65,7 +77,7 @@ Read current versions from `pubspec.yaml` in each package. Apply bump:
 
 For app and backend: also increment build number (`+N` becomes `+N+1`). Shared has no build number.
 
-### 6. Present Summary
+### 7. Present Summary
 
 Display a table:
 
@@ -77,15 +89,15 @@ Display a table:
 
 List up to 3 key commits per package (highest severity first). **If `--dry-run`, stop here.**
 
-### 7. Confirm
+### 8. Confirm
 
 Ask the user to approve or adjust bumps. Recalculate if they request overrides.
 
-### 8. Apply
+### 9. Apply
 
 Edit the `version:` line in each bumped package's `pubspec.yaml`.
 
-### 9. Generate Changelog
+### 10. Generate Changelog
 
 Create or prepend to root `CHANGELOG.md`. Format per [Keep a Changelog](https://keepachangelog.com/):
 
@@ -103,7 +115,7 @@ Create or prepend to root `CHANGELOG.md`. Format per [Keep a Changelog](https://
 
 Type mapping: `feat`→Added, `fix`→Fixed, `refactor`/`perf`→Changed. Omit `style`/`chore`/`docs`/`test` unless the user requests them.
 
-### 10. Tag
+### 11. Tag
 
 ```bash
 git tag v{new_app_version}
