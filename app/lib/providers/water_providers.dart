@@ -19,7 +19,7 @@ final waterNotifierProvider = AsyncNotifierProvider<WaterNotifier, WaterState>(
 class WaterNotifier extends AsyncNotifier<WaterState> {
   @override
   Future<WaterState> build() {
-    return ref.read(waterRepoProvider).todayStatus();
+    return ref.watch(waterRepoProvider).todayStatus();
   }
 
   Future<void> setGlasses(int glasses) async {

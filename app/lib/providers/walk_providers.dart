@@ -19,7 +19,7 @@ final walkNotifierProvider = AsyncNotifierProvider<WalkNotifier, WalkState>(
 class WalkNotifier extends AsyncNotifier<WalkState> {
   @override
   Future<WalkState> build() {
-    return ref.read(walkRepoProvider).todayStatus();
+    return ref.watch(walkRepoProvider).todayStatus();
   }
 
   Future<void> save({required bool walked, int? durationMin}) async {

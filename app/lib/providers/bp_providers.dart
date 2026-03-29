@@ -19,7 +19,7 @@ final bpNotifierProvider = AsyncNotifierProvider<BpNotifier, BpState>(
 class BpNotifier extends AsyncNotifier<BpState> {
   @override
   Future<BpState> build() {
-    return ref.read(bpRepoProvider).todayStatus();
+    return ref.watch(bpRepoProvider).todayStatus();
   }
 
   Future<void> save({required int systolic, required int diastolic}) async {

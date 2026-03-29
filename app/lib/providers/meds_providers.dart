@@ -19,11 +19,19 @@ final medsNotifierProvider = AsyncNotifierProvider<MedsNotifier, MedsState>(
 class MedsNotifier extends AsyncNotifier<MedsState> {
   @override
   Future<MedsState> build() {
-    return ref.read(medsRepoProvider).todayStatus();
+    return ref.watch(medsRepoProvider).todayStatus();
   }
 
   Future<void> confirm(String session) async {
     await ref.read(medsRepoProvider).confirmMeds(session: session, taken: true);
     state = AsyncData(await ref.read(medsRepoProvider).todayStatus());
+  }
+
+  Future<bool> undo(String session) async {
+    final success = await ref.read(medsRepoProvider).undoMeds(session);
+    if (success) {
+      state = AsyncData(await ref.read(medsRepoProvider).todayStatus());
+    }
+    return success;
   }
 }

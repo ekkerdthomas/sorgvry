@@ -14,4 +14,24 @@ class MedsState {
     this.nightAt,
     this.b12At,
   });
+
+  bool isTaken(String session) => switch (session) {
+    'morning' => morningTaken,
+    'night' => nightTaken,
+    'b12' => b12Taken,
+    _ => false,
+  };
+
+  DateTime? takenAt(String session) => switch (session) {
+    'morning' => morningAt,
+    'night' => nightAt,
+    'b12' => b12At,
+    _ => null,
+  };
+
+  bool canUndo(String session) {
+    final at = takenAt(session);
+    if (at == null) return false;
+    return DateTime.now().difference(at).inMinutes <= 30;
+  }
 }

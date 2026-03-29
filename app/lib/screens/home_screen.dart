@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../providers/bp_providers.dart';
+import '../providers/meds_providers.dart';
+import '../providers/walk_providers.dart';
+import '../providers/water_providers.dart';
 import '../theme.dart';
-
-/// Calculates whether today is a B12 injection day.
-bool isB12Day(DateTime date) {
-  final b12Start = DateTime(2026, 3, 25);
-  final diff = DateUtils.dateOnly(date).difference(DateUtils.dateOnly(b12Start)).inDays;
-  return diff >= 0 && diff % 14 == 0;
-}
+import '../utils/b12.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -44,7 +42,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _ => 'Goeie naand, Amanda',
     };
 
+    final meds = ref.watch(medsNotifierProvider);
+    final bp = ref.watch(bpNotifierProvider);
+    final water = ref.watch(waterNotifierProvider);
+    final walk = ref.watch(walkNotifierProvider);
     final showB12 = isB12Day(DateTime.now());
+
+    // Meds card state (morning)
+    final medsData = meds.value;
+    final morningDone = medsData?.morningTaken ?? false;
+    final medsColor = morningDone
+        ? SorgvryColors.cardDone
+        : (hour >= 9 ? SorgvryColors.cardLate : SorgvryColors.cardPending);
+    final medsSubtitle = morningDone ? 'Klaar' : 'Nog nie gedoen';
+
+    // Night meds card state
+    final nightDone = medsData?.nightTaken ?? false;
+    final nightColor = nightDone
+        ? SorgvryColors.cardDone
+        : (hour >= 20 ? SorgvryColors.cardLate : SorgvryColors.cardPending);
+    final nightSubtitle = nightDone ? 'Klaar' : 'Nog nie gedoen';
+
+    // BP card state
+    final bpData = bp.value;
+    final bpDone = bpData?.hasReading ?? false;
+    final bpMap = bpData?.meanArterialPressure;
+    final bpColor = bpDone
+        ? (bpMap != null && bpMap > 110
+              ? SorgvryColors.cardAlert
+              : SorgvryColors.cardDone)
+        : (hour >= 11 ? SorgvryColors.cardLate : SorgvryColors.cardPending);
+    final bpSubtitle = bpDone ? '${bpMap?.round()} MAP' : 'Nog nie gedoen';
+
+    // Water card state
+    final waterData = water.value;
+    final glasses = waterData?.glasses ?? 0;
+    final waterColor = glasses >= 8
+        ? SorgvryColors.cardDone
+        : SorgvryColors.cardPending;
+    final waterSubtitle = '$glasses/8 glase';
+
+    // Walk card state
+    final walkData = walk.value;
+    final walked = walkData?.walked ?? false;
+    final walkColor = walked
+        ? SorgvryColors.cardDone
+        : (hour >= 17 ? SorgvryColors.cardLate : SorgvryColors.cardPending);
+    final walkSubtitle = walked
+        ? (walkData?.durationMin != null
+              ? '${walkData!.durationMin} min'
+              : 'Klaar')
+        : 'Nog nie gedoen';
+
+    // B12 card state
+    final b12Done = medsData?.b12Taken ?? false;
+    final b12Color = b12Done ? SorgvryColors.cardDone : SorgvryColors.cardLate;
 
     return Scaffold(
       appBar: AppBar(
@@ -69,30 +121,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   _HomeCard(
                     title: 'Môre Medisyne',
                     icon: Icons.medication,
-                    color: SorgvryColors.cardPending,
-                    subtitle: 'Nog nie gedoen',
+                    color: medsColor,
+                    subtitle: medsSubtitle,
                     onTap: () => context.go('/medisyne?session=morning'),
                   ),
                   _HomeCard(
                     title: 'Bloeddruk',
                     icon: Icons.favorite,
-                    color: SorgvryColors.cardPending,
-                    subtitle: 'Nog nie gedoen',
+                    color: bpColor,
+                    subtitle: bpSubtitle,
                     onTap: () => context.go('/bloeddruk'),
                   ),
                   _HomeCard(
                     title: 'Water',
                     icon: Icons.water_drop,
-                    color: SorgvryColors.cardPending,
-                    subtitle: '0/8 glase',
+                    color: waterColor,
+                    subtitle: waterSubtitle,
                     onTap: () => context.go('/water'),
                   ),
                   _HomeCard(
                     title: 'Stap',
                     icon: Icons.directions_walk,
-                    color: SorgvryColors.cardPending,
-                    subtitle: 'Nog nie gedoen',
+                    color: walkColor,
+                    subtitle: walkSubtitle,
                     onTap: () => context.go('/stap'),
+                  ),
+                  _HomeCard(
+                    title: 'Aand Medisyne',
+                    icon: Icons.medication_liquid,
+                    color: nightColor,
+                    subtitle: nightSubtitle,
+                    onTap: () => context.go('/medisyne?session=night'),
                   ),
                 ],
               ),
@@ -103,8 +162,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: _HomeCard(
                   title: 'B12 Inspuiting',
                   icon: Icons.vaccines,
-                  color: SorgvryColors.cardLate,
-                  subtitle: 'Vandag',
+                  color: b12Color,
+                  subtitle: b12Done ? 'Klaar' : 'Vandag',
                   onTap: () => context.go('/medisyne?session=b12'),
                 ),
               ),
@@ -156,9 +215,9 @@ class _HomeCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   subtitle!,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.white70,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(color: Colors.white70),
                   textAlign: TextAlign.center,
                 ),
               ],
