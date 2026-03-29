@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
 import 'package:drift/drift.dart';
-import 'package:sorgvry_backend/middleware/auth.dart';
 import 'package:sorgvry_shared/sorgvry_shared.dart';
 
 /// B12 injection start date per spec (section 10).
@@ -27,7 +26,6 @@ Future<Response> onRequest(RequestContext context) async {
 
   try {
     final db = context.read<SorgvryDatabase>();
-    final deviceId = context.read<AuthenticatedDeviceId>().value;
 
     // Parse date query parameter, default to today (midnight-normalised).
     final dateParam = context.request.uri.queryParameters['date'];
@@ -36,11 +34,11 @@ Future<Response> onRequest(RequestContext context) async {
         : DateTime.now().toUtc();
     final normalised = DateTime.utc(date.year, date.month, date.day);
 
-    // --- Meds ---
+    // --- Meds (latest per session across all devices) ---
     final medRows =
-        await (db.select(db.medLogs)..where(
-              (t) => t.deviceId.equals(deviceId) & t.date.equals(normalised),
-            ))
+        await (db.select(db.medLogs)
+              ..where((t) => t.date.equals(normalised))
+              ..orderBy([(t) => OrderingTerm.desc(t.loggedAt)]))
             .get();
 
     final medsMap = <String, Map<String, dynamic>>{};
@@ -57,11 +55,12 @@ Future<Response> onRequest(RequestContext context) async {
       'taken': b12Row?.taken ?? false,
     };
 
-    // --- Blood pressure ---
+    // --- Blood pressure (latest across all devices) ---
     final bpRow =
-        await (db.select(db.bpReadings)..where(
-              (t) => t.deviceId.equals(deviceId) & t.date.equals(normalised),
-            ))
+        await (db.select(db.bpReadings)
+              ..where((t) => t.date.equals(normalised))
+              ..orderBy([(t) => OrderingTerm.desc(t.loggedAt)])
+              ..limit(1))
             .getSingleOrNull();
 
     final bpMap = bpRow != null
@@ -73,22 +72,24 @@ Future<Response> onRequest(RequestContext context) async {
           }
         : <String, dynamic>{};
 
-    // --- Water ---
+    // --- Water (highest count across all devices) ---
     final waterRow =
-        await (db.select(db.waterLogs)..where(
-              (t) => t.deviceId.equals(deviceId) & t.date.equals(normalised),
-            ))
+        await (db.select(db.waterLogs)
+              ..where((t) => t.date.equals(normalised))
+              ..orderBy([(t) => OrderingTerm.desc(t.glasses)])
+              ..limit(1))
             .getSingleOrNull();
 
     final waterMap = waterRow != null
         ? <String, dynamic>{'glasses': waterRow.glasses}
         : <String, dynamic>{};
 
-    // --- Walk ---
+    // --- Walk (latest across all devices) ---
     final walkRow =
-        await (db.select(db.walkLogs)..where(
-              (t) => t.deviceId.equals(deviceId) & t.date.equals(normalised),
-            ))
+        await (db.select(db.walkLogs)
+              ..where((t) => t.date.equals(normalised))
+              ..orderBy([(t) => OrderingTerm.desc(t.loggedAt)])
+              ..limit(1))
             .getSingleOrNull();
 
     final walkMap = walkRow != null
@@ -113,7 +114,8 @@ Future<Response> onRequest(RequestContext context) async {
       statusCode: HttpStatus.badRequest,
       body: <String, dynamic>{'error': 'Invalid date format'},
     );
-  } catch (_) {
+  } catch (e, st) {
+    stderr.writeln('GET /summary error: $e\n$st');
     return Response.json(
       statusCode: HttpStatus.internalServerError,
       body: <String, dynamic>{'error': 'Internal server error'},

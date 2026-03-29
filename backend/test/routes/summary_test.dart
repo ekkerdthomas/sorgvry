@@ -5,7 +5,6 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:sorgvry_backend/middleware/auth.dart';
 import 'package:sorgvry_shared/sorgvry_shared.dart';
 import 'package:test/test.dart';
 
@@ -37,9 +36,6 @@ void main() {
     when(() => request.uri).thenReturn(uri);
     when(() => ctx.request).thenReturn(request);
     when(() => ctx.read<SorgvryDatabase>()).thenReturn(db);
-    when(
-      () => ctx.read<AuthenticatedDeviceId>(),
-    ).thenReturn(const AuthenticatedDeviceId(deviceId));
 
     return ctx;
   }
@@ -223,6 +219,71 @@ void main() {
       final response = await route.onRequest(ctx);
 
       expect(response.statusCode, HttpStatus.badRequest);
+    });
+
+    test('aggregates data across multiple devices', () async {
+      final date = DateTime.utc(2026, 4);
+
+      // Device A logs morning meds early.
+      await db
+          .into(db.medLogs)
+          .insert(
+            MedLogsCompanion(
+              deviceId: const Value('device-a'),
+              date: Value(date),
+              session: const Value('morning'),
+              taken: const Value(true),
+              loggedAt: Value(DateTime.utc(2026, 4, 1, 7, 0)),
+              synced: const Value(true),
+            ),
+          );
+
+      // Device B logs morning meds later (should win — latest).
+      await db
+          .into(db.medLogs)
+          .insert(
+            MedLogsCompanion(
+              deviceId: const Value('device-b'),
+              date: Value(date),
+              session: const Value('morning'),
+              taken: const Value(true),
+              loggedAt: Value(DateTime.utc(2026, 4, 1, 7, 30)),
+              synced: const Value(true),
+            ),
+          );
+
+      // Device A logs water = 4, Device B logs water = 6 (highest wins).
+      await db
+          .into(db.waterLogs)
+          .insert(
+            WaterLogsCompanion(
+              deviceId: const Value('device-a'),
+              date: Value(date),
+              glasses: const Value(4),
+              loggedAt: Value(date),
+              synced: const Value(true),
+            ),
+          );
+      await db
+          .into(db.waterLogs)
+          .insert(
+            WaterLogsCompanion(
+              deviceId: const Value('device-b'),
+              date: Value(date),
+              glasses: const Value(6),
+              loggedAt: Value(date),
+              synced: const Value(true),
+            ),
+          );
+
+      final ctx = buildContext(date: '2026-04-01');
+      final response = await route.onRequest(ctx);
+      final body = jsonDecode(await response.body()) as Map<String, dynamic>;
+
+      // Latest meds entry (device-b at 07:30).
+      expect(body['meds']['morning'], {'taken': true, 'at': '07:30'});
+      // Highest water count.
+      expect(body['water'], {'glasses': 6});
     });
 
     test('rejects non-GET methods', () async {
