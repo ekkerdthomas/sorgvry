@@ -62,7 +62,7 @@ void main() {
     });
 
     test('returns meds data when morning and night are logged', () async {
-      final date = DateTime(2026, 4, 1);
+      final date = DateTime(2026, 4);
       await db
           .into(db.medLogs)
           .insert(
@@ -97,7 +97,7 @@ void main() {
     });
 
     test('returns BP reading when logged', () async {
-      final date = DateTime(2026, 4, 1);
+      final date = DateTime(2026, 4);
       await db
           .into(db.bpReadings)
           .insert(
@@ -106,7 +106,7 @@ void main() {
               date: Value(date),
               systolic: const Value(148),
               diastolic: const Value(88),
-              meanArterialPressure: const Value(108.0),
+              meanArterialPressure: const Value(108),
               loggedAt: Value(DateTime(2026, 4, 1, 8, 32)),
               synced: const Value(true),
             ),
@@ -123,7 +123,7 @@ void main() {
     });
 
     test('returns water and walk data when logged', () async {
-      final date = DateTime(2026, 4, 1);
+      final date = DateTime(2026, 4);
       await db
           .into(db.waterLogs)
           .insert(
@@ -184,7 +184,7 @@ void main() {
               date: Value(date),
               session: const Value('b12'),
               taken: const Value(true),
-              loggedAt: Value(DateTime(2026, 3, 27, 9, 0)),
+              loggedAt: Value(DateTime(2026, 3, 27, 9)),
               synced: const Value(true),
             ),
           );

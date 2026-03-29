@@ -7,6 +7,7 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:8600:8080"
+      - "172.17.0.1:8600:8080"
     volumes:
       - /opt/sorgvry/data:/app/data
     env_file:
