@@ -108,37 +108,43 @@ class _BpScreenState extends ConsumerState<BpScreen> {
           leading: BackButton(onPressed: () => context.go('/')),
           title: const SorgvryLogo(),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(SorgvrySpacing.cardPadding),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.check_circle, size: 64, color: SorgvryColors.cardDone),
-              const SizedBox(height: 16),
-              Text(
-                '${existingReading.systolic}/${existingReading.diastolic}',
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'MAP: ${existingReading.meanArterialPressure?.round() ?? '—'}',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 24),
-              if (!_saved)
-                Text(
-                  'Reeds vandag gemeet',
-                  style: Theme.of(context).textTheme.bodyLarge,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(SorgvrySpacing.cardPadding),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  size: 64,
+                  color: SorgvryColors.cardDone,
                 ),
-              if (_saved) ...[
-                const PhotoCaptureButton(module: 'bp'),
                 const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: () => context.go('/'),
-                  child: const Text('KLAAR'),
+                Text(
+                  '${existingReading.systolic}/${existingReading.diastolic}',
+                  style: Theme.of(context).textTheme.headlineLarge,
                 ),
+                const SizedBox(height: 8),
+                Text(
+                  'MAP: ${existingReading.meanArterialPressure?.round() ?? '—'}',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 24),
+                if (!_saved)
+                  Text(
+                    'Reeds vandag gemeet',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                if (_saved) ...[
+                  const PhotoCaptureButton(module: 'bp'),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () => context.go('/'),
+                    child: const Text('KLAAR'),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       );
