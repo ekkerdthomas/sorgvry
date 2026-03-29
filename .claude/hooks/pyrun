@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Universal Python resolver — finds python3, py, or python
+# Also resolves project root so hooks work from any CWD (e.g. cd backend)
+
 PY=$(command -v python3 2>/dev/null \
   || command -v py 2>/dev/null \
   || command -v python 2>/dev/null)
@@ -7,4 +9,11 @@ if [ -z "$PY" ]; then
   echo '{"error":"No Python interpreter found (tried python3, py, python)"}' >&2
   exit 1
 fi
+
+# Resolve project root via git so relative .claude/hooks/ paths always work
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$PROJECT_ROOT" ]; then
+  cd "$PROJECT_ROOT" || true
+fi
+
 exec "$PY" "$@"

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun -c \"\nimport json, sys\nd = json.load(sys.stdin)\np = d.get('tool_input', {}).get('file_path', '')\nenv_files = ['.env', '.env.local', '.env.production', 'credentials', 'secrets', 'app_config.json', 'appsettings.json']\nif any(e in p for e in env_files):\n    print(json.dumps({'systemMessage': '[SECURITY] Editing credentials/config file. Ensure nothing sensitive is committed to git.'}))\nsys.exit(0)\n\""
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun -c \"\nimport json, sys\nd = json.load(sys.stdin)\np = d.get('tool_input', {}).get('file_path', '')\nenv_files = ['.env', '.env.local', '.env.production', 'credentials', 'secrets', 'app_config.json', 'appsettings.json']\nif any(e in p for e in env_files):\n    print(json.dumps({'systemMessage': '[SECURITY] Editing credentials/config file. Ensure nothing sensitive is committed to git.'}))\nsys.exit(0)\n\""
           }
         ]
       },
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun -c \"\nimport json, sys, re\nd = json.load(sys.stdin)\nti = d.get('tool_input', {})\np = ti.get('file_path', '')\nskip = ['node_modules', '.claude/', 'test/', '.md']\nif any(s in p for s in skip):\n    sys.exit(0)\ncontent = ti.get('content', '') or ti.get('new_string', '')\nif not content:\n    sys.exit(0)\nviolations = []\nqf = re.search(r'(?://|#)\\s*(hack|workaround|band-?aid|quick\\s*fix|temp(orary)?\\s*fix|hotfix)\\b', content, re.IGNORECASE)\nif qf:\n    violations.append(qf.group(0).strip())\ntd = re.search(r'(?://|#)\\s*(TODO|FIXME):\\s*(fix later|investigate later|come back|revisit|temporary)\\b', content, re.IGNORECASE)\nif td:\n    violations.append(td.group(0).strip())\nif violations:\n    print(json.dumps({'systemMessage': '[STEER] Detected ' + violations[0] + '. Quick-fix markers suggest a workaround rather than a root-cause fix. Consider addressing the underlying issue.'}))\n    sys.exit(0)\nsys.exit(0)\n\""
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun -c \"\nimport json, sys, re\nd = json.load(sys.stdin)\nti = d.get('tool_input', {})\np = ti.get('file_path', '')\nskip = ['node_modules', '.claude/', 'test/', '.md']\nif any(s in p for s in skip):\n    sys.exit(0)\ncontent = ti.get('content', '') or ti.get('new_string', '')\nif not content:\n    sys.exit(0)\nviolations = []\nqf = re.search(r'(?://|#)\\s*(hack|workaround|band-?aid|quick\\s*fix|temp(orary)?\\s*fix|hotfix)\\b', content, re.IGNORECASE)\nif qf:\n    violations.append(qf.group(0).strip())\ntd = re.search(r'(?://|#)\\s*(TODO|FIXME):\\s*(fix later|investigate later|come back|revisit|temporary)\\b', content, re.IGNORECASE)\nif td:\n    violations.append(td.group(0).strip())\nif violations:\n    print(json.dumps({'systemMessage': '[STEER] Detected ' + violations[0] + '. Quick-fix markers suggest a workaround rather than a root-cause fix. Consider addressing the underlying issue.'}))\n    sys.exit(0)\nsys.exit(0)\n\""
           }
         ]
       },
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun -c \"\nimport json, sys, re\nd = json.load(sys.stdin)\nti = d.get('tool_input', {})\np = ti.get('file_path', '')\nskip = ['.claude/settings.json', 'CLAUDE.md', 'SKILL.md', '.md', 'node_modules']\nif any(s in p for s in skip):\n    sys.exit(0)\ncontent = ti.get('content', '') or ti.get('new_string', '')\nif not content:\n    sys.exit(0)\npatterns = [\n    r'ignore\\s+(all\\s+)?previous\\s+instructions',\n    r'ignore\\s+(all\\s+)?above\\s+instructions',\n    r'you\\s+are\\s+now\\s+(a|an)',\n    r'system\\s*prompt\\s*:',\n    r'<\\s*system[_-]?prompt\\s*>',\n    r'IMPORTANT:\\s*override',\n    r'act\\s+as\\s+(root|admin|sudo)',\n]\nfor pat in patterns:\n    if re.search(pat, content, re.IGNORECASE):\n        print(json.dumps({'systemMessage': '[INJECTION] Potential prompt injection pattern detected. Review carefully (OWASP ASI01).'}))\n        break\nsys.exit(0)\n\""
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun -c \"\nimport json, sys, re\nd = json.load(sys.stdin)\nti = d.get('tool_input', {})\np = ti.get('file_path', '')\nskip = ['.claude/settings.json', 'CLAUDE.md', 'SKILL.md', '.md', 'node_modules']\nif any(s in p for s in skip):\n    sys.exit(0)\ncontent = ti.get('content', '') or ti.get('new_string', '')\nif not content:\n    sys.exit(0)\npatterns = [\n    r'ignore\\s+(all\\s+)?previous\\s+instructions',\n    r'ignore\\s+(all\\s+)?above\\s+instructions',\n    r'you\\s+are\\s+now\\s+(a|an)',\n    r'system\\s*prompt\\s*:',\n    r'<\\s*system[_-]?prompt\\s*>',\n    r'IMPORTANT:\\s*override',\n    r'act\\s+as\\s+(root|admin|sudo)',\n]\nfor pat in patterns:\n    if re.search(pat, content, re.IGNORECASE):\n        print(json.dumps({'systemMessage': '[INJECTION] Potential prompt injection pattern detected. Review carefully (OWASP ASI01).'}))\n        break\nsys.exit(0)\n\""
           }
         ]
       },
@@ -33,7 +33,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun -c \"\nimport json, sys\nd = json.load(sys.stdin)\np = d.get('tool_input', {}).get('file_path', '')\ncritical = 'drift/tables.dart, pubspec.yaml, app_router.dart, analysis_options.yaml, /migrations/'.split(',')\ncritical = [c.strip() for c in critical if c.strip()]\nif any(c in p for c in critical):\n    print(json.dumps({'systemMessage': '[GUARD] Critical infrastructure file (schema/routes/config). Run /validate-change after editing.'}))\nsys.exit(0)\n\""
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun -c \"\nimport json, sys\nd = json.load(sys.stdin)\np = d.get('tool_input', {}).get('file_path', '')\ncritical = 'drift/tables.dart, pubspec.yaml, app_router.dart, analysis_options.yaml, /migrations/'.split(',')\ncritical = [c.strip() for c in critical if c.strip()]\nif any(c in p for c in critical):\n    print(json.dumps({'systemMessage': '[GUARD] Critical infrastructure file (schema/routes/config). Run /validate-change after editing.'}))\nsys.exit(0)\n\""
           }
         ]
       },
@@ -51,7 +51,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun -c \"\nimport json, sys, os, re\nd = json.load(sys.stdin)\nti = d.get('tool_input', {})\np = ti.get('file_path', '')\nif not p or not p.endswith('.dart'):\n    sys.exit(0)\nskip = ['test/', '_test.dart', '.g.dart', '.freezed.dart']\nif any(s in p for s in skip):\n    sys.exit(0)\ncontent = ti.get('content', '') or ti.get('new_string', '')\nif not content:\n    sys.exit(0)\nimports = re.findall(r'import\\s+[\\x27\\x22](.+?)[\\x27\\x22];', content)\nif not imports:\n    sys.exit(0)\ndef has_layer(imp, keywords):\n    return any(k in imp.lower() for k in keywords)\nbn = os.path.basename(p).lower()\nviolations = []\nif '_screen.' in bn or '/screens/' in p.lower():\n    for imp in imports:\n        if has_layer(imp, ['repository', '/repositories/', 'model', '/models/']):\n            if not has_layer(imp, ['provider', 'view_model', 'cubit', 'bloc']):\n                violations.append(f'Screen imports {imp} (should go through Provider/Cubit layer)')\nelif '_provider.' in bn or '/providers/' in p.lower():\n    for imp in imports:\n        if has_layer(imp, ['screen', '/screens/']):\n            violations.append(f'Provider imports {imp} (screens depend on providers, not vice versa)')\nif violations:\n    msg = '; '.join(violations[:2])\n    print(json.dumps({'systemMessage': f'[BOUNDARY] {msg}. See coding-conventions.md Layer Boundaries.'}))\nsys.exit(0)\n\""
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun -c \"\nimport json, sys, os, re\nd = json.load(sys.stdin)\nti = d.get('tool_input', {})\np = ti.get('file_path', '')\nif not p or not p.endswith('.dart'):\n    sys.exit(0)\nskip = ['test/', '_test.dart', '.g.dart', '.freezed.dart']\nif any(s in p for s in skip):\n    sys.exit(0)\ncontent = ti.get('content', '') or ti.get('new_string', '')\nif not content:\n    sys.exit(0)\nimports = re.findall(r'import\\s+[\\x27\\x22](.+?)[\\x27\\x22];', content)\nif not imports:\n    sys.exit(0)\ndef has_layer(imp, keywords):\n    return any(k in imp.lower() for k in keywords)\nbn = os.path.basename(p).lower()\nviolations = []\nif '_screen.' in bn or '/screens/' in p.lower():\n    for imp in imports:\n        if has_layer(imp, ['repository', '/repositories/', 'model', '/models/']):\n            if not has_layer(imp, ['provider', 'view_model', 'cubit', 'bloc']):\n                violations.append(f'Screen imports {imp} (should go through Provider/Cubit layer)')\nelif '_provider.' in bn or '/providers/' in p.lower():\n    for imp in imports:\n        if has_layer(imp, ['screen', '/screens/']):\n            violations.append(f'Provider imports {imp} (screens depend on providers, not vice versa)')\nif violations:\n    msg = '; '.join(violations[:2])\n    print(json.dumps({'systemMessage': f'[BOUNDARY] {msg}. See coding-conventions.md Layer Boundaries.'}))\nsys.exit(0)\n\""
           }
         ]
       }
@@ -62,7 +62,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun -c \"\nimport json, sys, os\nd = json.load(sys.stdin)\np = d.get('tool_input', {}).get('file_path', '')\next_str = os.environ.get('WORKFLOW_CODE_EXTENSIONS', '.ts,.tsx,.py,.dart,.cs')\nextensions = tuple(e.strip() for e in ext_str.split(','))\nif p.endswith(extensions):\n    print(json.dumps({'systemMessage': '[REMIND] Source file modified. Run /validate-change before committing.'}))\nsys.exit(0)\n\""
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun -c \"\nimport json, sys, os\nd = json.load(sys.stdin)\np = d.get('tool_input', {}).get('file_path', '')\next_str = os.environ.get('WORKFLOW_CODE_EXTENSIONS', '.ts,.tsx,.py,.dart,.cs')\nextensions = tuple(e.strip() for e in ext_str.split(','))\nif p.endswith(extensions):\n    print(json.dumps({'systemMessage': '[REMIND] Source file modified. Run /validate-change before committing.'}))\nsys.exit(0)\n\""
           }
         ]
       },
@@ -71,7 +71,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun -c \"\nimport json, sys, os\nd = json.load(sys.stdin)\np = d.get('tool_input', {}).get('file_path', '')\nif not p or 'session-files' in p:\n    sys.exit(0)\nsid = d.get('session_id', 'unknown')\ncwd = os.getcwd()\nrel = os.path.relpath(p, cwd) if p.startswith(cwd) else p\ntf = os.path.join(cwd, '.claude', f'session-files-{sid}.txt')\nexisting = set()\nif os.path.exists(tf):\n    with open(tf) as f:\n        existing = set(l.strip() for l in f if l.strip())\nif rel not in existing:\n    os.makedirs(os.path.dirname(tf), exist_ok=True)\n    with open(tf, 'a') as f:\n        f.write(rel + '\\n')\nsys.exit(0)\n\""
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun -c \"\nimport json, sys, os\nd = json.load(sys.stdin)\np = d.get('tool_input', {}).get('file_path', '')\nif not p or 'session-files' in p:\n    sys.exit(0)\nsid = d.get('session_id', 'unknown')\ncwd = os.getcwd()\nrel = os.path.relpath(p, cwd) if p.startswith(cwd) else p\ntf = os.path.join(cwd, '.claude', f'session-files-{sid}.txt')\nexisting = set()\nif os.path.exists(tf):\n    with open(tf) as f:\n        existing = set(l.strip() for l in f if l.strip())\nif rel not in existing:\n    os.makedirs(os.path.dirname(tf), exist_ok=True)\n    with open(tf, 'a') as f:\n        f.write(rel + '\\n')\nsys.exit(0)\n\""
           }
         ]
       },
@@ -80,7 +80,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun -c \"\nimport json, sys, os\nd = json.load(sys.stdin)\np = d.get('tool_input', {}).get('file_path', '')\nif not p:\n    sys.exit(0)\nskip_ext = ('.md', '.json', '.yaml', '.yml', '.lock', '.txt', '.csv', '.html', '.css', '.svg')\nif p.endswith(skip_ext):\n    sys.exit(0)\nskip_path = ['node_modules', 'test', 'tests', '__tests__', '.spec.', '_test.', '.test.', '.g.dart', '.freezed.']\nif any(s in p for s in skip_path):\n    sys.exit(0)\nif not os.path.exists(p):\n    sys.exit(0)\nwith open(p) as f:\n    lines = len(f.readlines())\nsoft = int(os.environ.get('WORKFLOW_FILE_SIZE_SOFT', '400'))\nhard = int(os.environ.get('WORKFLOW_FILE_SIZE_HARD', '600'))\nbn = os.path.basename(p).lower()\nif any(k in bn for k in ['controller', 'router', 'endpoint', 'screen', 'route']):\n    soft, hard = 300, 500\nelif any(k in bn for k in ['service', 'provider', 'repository']):\n    soft, hard = 350, 550\nif lines > hard:\n    print(json.dumps({'decision': 'block', 'reason': f'[SIZE] BLOCKED: {os.path.basename(p)} is {lines} lines (hard limit: {hard}). Extract before continuing.'}))\n    sys.exit(2)\nelif lines > soft:\n    print(json.dumps({'systemMessage': f'[SIZE] {os.path.basename(p)} is {lines} lines (soft limit: {soft}). Consider extraction.'}))\nsys.exit(0)\n\""
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun -c \"\nimport json, sys, os\nd = json.load(sys.stdin)\np = d.get('tool_input', {}).get('file_path', '')\nif not p:\n    sys.exit(0)\nskip_ext = ('.md', '.json', '.yaml', '.yml', '.lock', '.txt', '.csv', '.html', '.css', '.svg')\nif p.endswith(skip_ext):\n    sys.exit(0)\nskip_path = ['node_modules', 'test', 'tests', '__tests__', '.spec.', '_test.', '.test.', '.g.dart', '.freezed.']\nif any(s in p for s in skip_path):\n    sys.exit(0)\nif not os.path.exists(p):\n    sys.exit(0)\nwith open(p) as f:\n    lines = len(f.readlines())\nsoft = int(os.environ.get('WORKFLOW_FILE_SIZE_SOFT', '400'))\nhard = int(os.environ.get('WORKFLOW_FILE_SIZE_HARD', '600'))\nbn = os.path.basename(p).lower()\nif any(k in bn for k in ['controller', 'router', 'endpoint', 'screen', 'route']):\n    soft, hard = 300, 500\nelif any(k in bn for k in ['service', 'provider', 'repository']):\n    soft, hard = 350, 550\nif lines > hard:\n    print(json.dumps({'decision': 'block', 'reason': f'[SIZE] BLOCKED: {os.path.basename(p)} is {lines} lines (hard limit: {hard}). Extract before continuing.'}))\n    sys.exit(2)\nelif lines > soft:\n    print(json.dumps({'systemMessage': f'[SIZE] {os.path.basename(p)} is {lines} lines (soft limit: {soft}). Consider extraction.'}))\nsys.exit(0)\n\""
           }
         ]
       },
@@ -89,7 +89,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun -c \"\nimport json, sys, subprocess\nd = json.load(sys.stdin)\ncmd = d.get('tool_input', {}).get('command', '')\nif 'git commit' not in cmd or '--amend' in cmd:\n    sys.exit(0)\ntry:\n    msg = subprocess.check_output(['git', 'log', '-1', '--format=%B'], text=True, timeout=5)\n    if 'Co-Authored-By' not in msg:\n        print(json.dumps({'systemMessage': '[COMPLIANCE] Last commit is missing Co-Authored-By trailer. Use /commit skill to ensure attribution.'}))\nexcept Exception:\n    pass\nsys.exit(0)\n\""
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun -c \"\nimport json, sys, subprocess\nd = json.load(sys.stdin)\ncmd = d.get('tool_input', {}).get('command', '')\nif 'git commit' not in cmd or '--amend' in cmd:\n    sys.exit(0)\ntry:\n    msg = subprocess.check_output(['git', 'log', '-1', '--format=%B'], text=True, timeout=5)\n    if 'Co-Authored-By' not in msg:\n        print(json.dumps({'systemMessage': '[COMPLIANCE] Last commit is missing Co-Authored-By trailer. Use /commit skill to ensure attribution.'}))\nexcept Exception:\n    pass\nsys.exit(0)\n\""
           }
         ]
       },
@@ -98,7 +98,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/dart_format.py",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/dart_format.py",
             "timeout": 30
           }
         ]
@@ -108,7 +108,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/check_print.py",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/check_print.py",
             "timeout": 10
           }
         ]
@@ -118,7 +118,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/dart_analyze.py",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/dart_analyze.py",
             "timeout": 30
           }
         ]
@@ -128,7 +128,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/check_file_size.py",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/check_file_size.py",
             "timeout": 10
           }
         ]
@@ -138,7 +138,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/check_deprecated.py",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/check_deprecated.py",
             "timeout": 10
           }
         ]
@@ -148,7 +148,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/check_imports.py",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/check_imports.py",
             "timeout": 10
           }
         ]
@@ -158,7 +158,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/check_nesting.py",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/check_nesting.py",
             "timeout": 10
           }
         ]
@@ -170,11 +170,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/session-start.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/session-start.py"
           },
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/mcp-security-scan.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/mcp-security-scan.py"
           }
         ]
       }
@@ -185,7 +185,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/pre-compact.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/pre-compact.py"
           }
         ]
       }
@@ -196,7 +196,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/subagent-start.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/subagent-start.py"
           }
         ]
       }
@@ -207,7 +207,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/post-failure.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/post-failure.py"
           }
         ]
       }
@@ -217,7 +217,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/task-completed.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/task-completed.py"
           }
         ]
       }
@@ -227,7 +227,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/teammate-idle.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/teammate-idle.py"
           }
         ]
       }
@@ -237,11 +237,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/prompt-submit.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/prompt-submit.py"
           },
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/context-check.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/context-check.py"
           }
         ]
       }
@@ -251,7 +251,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/subagent-stop.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/subagent-stop.py"
           }
         ]
       }
@@ -261,7 +261,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pyrun .claude/hooks/session-end.py"
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pyrun $(git rev-parse --show-toplevel)/.claude/hooks/session-end.py"
           }
         ]
       }
