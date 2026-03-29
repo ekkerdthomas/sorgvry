@@ -1,0 +1,24 @@
+name: sorgvry_backend
+description: Sorgvry Dart Frog API server.
+version: 0.1.0+1
+publish_to: none
+
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  dart_frog: ^1.1.0
+  sorgvry_shared:
+    version: any
+  drift: ^2.31.0
+  sqlite3: ^2.7.4
+  dart_jsonwebtoken: ^2.16.0
+  mailer: ^6.2.1
+  cron: ^0.6.1
+
+dev_dependencies:
+  dart_frog_lint: ^0.1.0
+  mocktail: ^1.0.0
+  test: ^1.0.0

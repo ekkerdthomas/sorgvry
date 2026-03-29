@@ -1,0 +1,25 @@
+# Dart/Flutter
+.dart_tool/
+.packages
+build/
+*.iml
+.idea/
+.vscode/
+
+# Pub
+pubspec.lock
+pubspec_overrides.yaml
+
+# Melos
+melos_*.iml
+
+# Environment
+.env
+
+# Generated (keep .g.dart files — needed for Drift)
+# .g.dart files are committed so consumers don't need build_runner
+
+# Claude session files
+.claude/session-files-*.txt
+.claude/hooks/failure-patterns/__pycache__/
+.claude/projects/

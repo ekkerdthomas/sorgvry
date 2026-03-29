@@ -1,0 +1,13 @@
+name: sorgvry_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+workspace:
+  - packages/sorgvry_shared
+  - app
+  - backend
+
+dev_dependencies:
+  melos: ^6.0.0

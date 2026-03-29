@@ -1,0 +1,47 @@
+name: sorgvry
+
+packages:
+  - packages/**
+  - app
+  - backend
+
+scripts:
+  analyze:
+    run: dart analyze --fatal-infos
+    exec:
+      concurrency: 3
+
+  format:
+    run: dart format --set-exit-if-changed .
+    exec:
+      concurrency: 3
+
+  build_runner:
+    run: dart run build_runner build --delete-conflicting-outputs
+    packageFilters:
+      dependsOn: build_runner
+    exec:
+      concurrency: 1
+      orderDependents: true
+
+  test:
+    run: dart test
+    packageFilters:
+      dirExists: test
+    exec:
+      concurrency: 1
+
+  test:shared:
+    run: dart test
+    packageFilters:
+      scope: sorgvry_shared
+
+  test:app:
+    run: flutter test
+    packageFilters:
+      scope: sorgvry
+
+  test:backend:
+    run: dart test
+    packageFilters:
+      scope: sorgvry_backend
