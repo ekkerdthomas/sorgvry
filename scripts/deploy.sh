@@ -27,6 +27,26 @@ deploy_web() {
   rsync -az --delete \
     app/build/web/ \
     "$PI_HOST:$REMOTE_DIR/web/"
+  purge_cloudflare_cache
+}
+
+purge_cloudflare_cache() {
+  # Read CF credentials from Pi .env
+  local cf_zone cf_token
+  cf_zone=$(ssh "$PI_HOST" "grep '^CF_ZONE_ID=' $REMOTE_DIR/.env | cut -d= -f2" 2>/dev/null || true)
+  cf_token=$(ssh "$PI_HOST" "grep '^CF_API_TOKEN=' $REMOTE_DIR/.env | cut -d= -f2" 2>/dev/null || true)
+
+  if [ -n "$cf_zone" ] && [ -n "$cf_token" ]; then
+    echo "==> Purging Cloudflare cache..."
+    curl -s -X POST \
+      "https://api.cloudflare.com/client/v4/zones/$cf_zone/purge_cache" \
+      -H "Authorization: Bearer $cf_token" \
+      -H "Content-Type: application/json" \
+      -d '{"purge_everything":true}' | grep -o '"success":[a-z]*'
+    echo ""
+  else
+    echo "==> Skipping Cloudflare purge (CF_ZONE_ID/CF_API_TOKEN not set in Pi .env)"
+  fi
 }
 
 deploy_apk() {
