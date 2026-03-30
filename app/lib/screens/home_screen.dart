@@ -201,71 +201,85 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(SorgvrySpacing.gridGap),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(greeting, style: Theme.of(context).textTheme.headlineLarge),
-            const SizedBox(height: 16),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                childAspectRatio: 0.9,
-                mainAxisSpacing: SorgvrySpacing.gridGap,
-                crossAxisSpacing: SorgvrySpacing.gridGap,
-                children: [
-                  _HomeCard(
-                    title: 'Oggend Medisyne',
-                    icon: Icons.medication,
-                    color: medsColor,
-                    subtitle: medsSubtitle,
-                    onTap: () => context.go('/medisyne?session=morning'),
-                  ),
-                  _HomeCard(
-                    title: 'Bloeddruk',
-                    icon: Icons.favorite,
-                    color: bpColor,
-                    subtitle: bpSubtitle,
-                    onTap: () => context.go('/bloeddruk'),
-                  ),
-                  _HomeCard(
-                    title: 'Water',
-                    icon: Icons.water_drop,
-                    color: waterColor,
-                    subtitle: waterSubtitle,
-                    onTap: () => context.go('/water'),
-                  ),
-                  _HomeCard(
-                    title: 'Stap',
-                    icon: Icons.directions_walk,
-                    color: walkColor,
-                    subtitle: walkSubtitle,
-                    onTap: () => context.go('/stap'),
-                  ),
-                  _HomeCard(
-                    title: 'Aand Medisyne',
-                    icon: Icons.medication_liquid,
-                    color: nightColor,
-                    subtitle: nightSubtitle,
-                    onTap: () => context.go('/medisyne?session=night'),
-                  ),
-                ],
-              ),
-            ),
-            if (showB12)
-              Padding(
-                padding: const EdgeInsets.only(top: SorgvrySpacing.gridGap),
-                child: _HomeCard(
-                  title: 'B12 Inspuiting',
-                  icon: Icons.vaccines,
-                  color: b12Color,
-                  subtitle: b12Done ? 'Klaar' : 'Vandag',
-                  onTap: () => context.go('/medisyne?session=b12'),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // 28 (heading) + 16 (gap) + padding = ~60px above grid
+          final availableHeight = constraints.maxHeight - 60;
+          final cardHeight = (availableHeight - 2 * SorgvrySpacing.gridGap) / 3;
+          final cardWidth =
+              (constraints.maxWidth - 3 * SorgvrySpacing.gridGap) / 2;
+          final aspectRatio = (cardWidth / cardHeight).clamp(0.7, 1.2);
+
+          return Padding(
+            padding: const EdgeInsets.all(SorgvrySpacing.gridGap),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  greeting,
+                  style: Theme.of(context).textTheme.headlineLarge,
                 ),
-              ),
-          ],
-        ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    childAspectRatio: aspectRatio,
+                    mainAxisSpacing: SorgvrySpacing.gridGap,
+                    crossAxisSpacing: SorgvrySpacing.gridGap,
+                    children: [
+                      _HomeCard(
+                        title: 'Oggend Medisyne',
+                        icon: Icons.medication,
+                        color: medsColor,
+                        subtitle: medsSubtitle,
+                        onTap: () => context.go('/medisyne?session=morning'),
+                      ),
+                      _HomeCard(
+                        title: 'Bloeddruk',
+                        icon: Icons.favorite,
+                        color: bpColor,
+                        subtitle: bpSubtitle,
+                        onTap: () => context.go('/bloeddruk'),
+                      ),
+                      _HomeCard(
+                        title: 'Water',
+                        icon: Icons.water_drop,
+                        color: waterColor,
+                        subtitle: waterSubtitle,
+                        onTap: () => context.go('/water'),
+                      ),
+                      _HomeCard(
+                        title: 'Stap',
+                        icon: Icons.directions_walk,
+                        color: walkColor,
+                        subtitle: walkSubtitle,
+                        onTap: () => context.go('/stap'),
+                      ),
+                      _HomeCard(
+                        title: 'Aand Medisyne',
+                        icon: Icons.medication_liquid,
+                        color: nightColor,
+                        subtitle: nightSubtitle,
+                        onTap: () => context.go('/medisyne?session=night'),
+                      ),
+                    ],
+                  ),
+                ),
+                if (showB12)
+                  Padding(
+                    padding: const EdgeInsets.only(top: SorgvrySpacing.gridGap),
+                    child: _HomeCard(
+                      title: 'B12 Inspuiting',
+                      icon: Icons.vaccines,
+                      color: b12Color,
+                      subtitle: b12Done ? 'Klaar' : 'Vandag',
+                      onTap: () => context.go('/medisyne?session=b12'),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
