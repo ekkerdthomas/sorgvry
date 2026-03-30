@@ -1,5 +1,15 @@
 # Changelog
 
+## [v0.7.0] - 2026-03-30
+
+### app
+#### Added
+- Implement daily push notifications for Android with deep-linking (#15) (8275894)
+
+#### Fixed
+- Increase water circles to 72px tap target (#14) (bbf1455)
+- Show KLAAR button when walk already logged from DB (#13) (f06eb5b)
+
 ## [v0.6.0] - 2026-03-29
 
 ### backend
