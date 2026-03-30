@@ -143,7 +143,7 @@ class RegisterRequest {
   factory RegisterRequest.fromJson(Map<String, dynamic> json) {
     return RegisterRequest(
       deviceId: json['deviceId'] as String,
-      patientName: json['patientName'] as String,
+      patientName: (json['patientName'] as String?) ?? 'Unknown',
     );
   }
 

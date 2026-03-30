@@ -51,9 +51,10 @@ purge_cloudflare_cache() {
 
 deploy_apk() {
   echo "==> Syncing APK to Pi..."
-  rsync -az \
+  rsync -az --checksum \
     app/build/app/outputs/flutter-apk/app-release.apk \
     "$PI_HOST:$REMOTE_DIR/download/sorgvry.apk"
+  purge_cloudflare_cache
 }
 
 # Parse arguments
