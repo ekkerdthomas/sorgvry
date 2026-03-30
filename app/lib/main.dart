@@ -45,6 +45,7 @@ void main() async {
         healthDbProvider.overrideWithValue(healthDb),
         localDbProvider.overrideWithValue(localDb),
         deviceIdProvider.overrideWithValue(deviceId),
+        syncStatusProvider.overrideWithValue(_syncService!.statusNotifier),
       ],
       child: const SorgvryApp(),
     ),

@@ -7,6 +7,7 @@ import '../config.dart';
 import '../providers/bp_providers.dart';
 import '../providers/db_providers.dart';
 import '../providers/meds_providers.dart';
+import '../services/sync_status.dart';
 import '../providers/walk_providers.dart';
 import '../providers/water_providers.dart';
 import '../theme.dart';
@@ -56,18 +57,60 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } catch (_) {
       deviceId = 'onbekend';
     }
+    final syncNotifier = ref.read(syncStatusProvider);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Debug Info'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _debugRow('Weergawe', _version),
-            _debugRow('Backend', backendUrl),
-            _debugRow('Toestel-ID', deviceId),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _debugRow('Weergawe', _version),
+              _debugRow('Backend', backendUrl),
+              _debugRow('Toestel-ID', deviceId),
+              const Divider(),
+              const Text(
+                'Sinkronisasie',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              ValueListenableBuilder<SyncStatus>(
+                valueListenable: syncNotifier,
+                builder: (context, status, _) {
+                  final unsyncedStr = status.unsyncedCounts.entries
+                      .where((e) => e.value > 0)
+                      .map((e) => '${e.key}: ${e.value}')
+                      .join(', ');
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _debugRow(
+                        'Laaste sukses',
+                        status.lastSuccessfulSync
+                                ?.toLocal()
+                                .toString()
+                                .substring(0, 19) ??
+                            'Nog nooit',
+                      ),
+                      _debugRow(
+                        'Status',
+                        status.isHealthy
+                            ? 'Gesond'
+                            : 'Fout (${status.consecutiveErrors}x)',
+                      ),
+                      if (status.lastError != null)
+                        _debugRow('Laaste fout', status.lastError!),
+                      _debugRow(
+                        'Ongesinkroniseer',
+                        unsyncedStr.isEmpty ? 'Geen' : unsyncedStr,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(

@@ -9,6 +9,7 @@ import 'package:sorgvry_shared/api/contracts.dart';
 import 'package:sorgvry_shared/database/database.dart';
 
 import '../database/local_database.dart';
+import 'sync_status.dart';
 
 class SyncService {
   final SorgvryDatabase healthDb;
@@ -19,6 +20,9 @@ class SyncService {
   Timer? _timer;
   String? _token;
   bool _running = false;
+  final ValueNotifier<SyncStatus> statusNotifier = ValueNotifier(
+    const SyncStatus(),
+  );
 
   SyncService({
     required this.healthDb,
@@ -47,11 +51,48 @@ class SyncService {
       await _syncWater();
       await _syncWalk();
       await _syncMedia();
-    } catch (_) {
-      // auth or network failure, retry next cycle
+      statusNotifier.value = SyncStatus(
+        lastSuccessfulSync: DateTime.now(),
+        unsyncedCounts: await _countUnsynced(),
+      );
+    } catch (e) {
+      final prev = statusNotifier.value;
+      Map<String, int> counts;
+      try {
+        counts = await _countUnsynced();
+      } catch (_) {
+        counts = prev.unsyncedCounts;
+      }
+      statusNotifier.value = SyncStatus(
+        lastSuccessfulSync: prev.lastSuccessfulSync,
+        lastError: e.toString(),
+        consecutiveErrors: prev.consecutiveErrors + 1,
+        unsyncedCounts: counts,
+      );
     } finally {
       _running = false;
     }
+  }
+
+  Future<Map<String, int>> _countUnsynced() async {
+    Future<int> count(TableInfo table, GeneratedColumn<bool> synced) async {
+      final expr = countAll();
+      final query = healthDb.selectOnly(table)
+        ..addColumns([expr])
+        ..where(synced.equals(false));
+      return await query.map((r) => r.read(expr)!).getSingle();
+    }
+
+    return {
+      'meds': await count(healthDb.medLogs, healthDb.medLogs.synced),
+      'bp': await count(healthDb.bpReadings, healthDb.bpReadings.synced),
+      'water': await count(healthDb.waterLogs, healthDb.waterLogs.synced),
+      'walk': await count(healthDb.walkLogs, healthDb.walkLogs.synced),
+      'media': await count(
+        healthDb.mediaAttachments,
+        healthDb.mediaAttachments.synced,
+      ),
+    };
   }
 
   // -- Auth ------------------------------------------------------------------
