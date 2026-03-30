@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.8.0] - 2026-03-30
+
+### app
+#### Added
+- Version display and hidden debug dialog on home screen (6c7d015)
+- Sync status tracking and debug diagnostics (29844d5)
+- Cloudflare cache purge on web deploy (e1330f2)
+
+#### Fixed
+- Dynamic aspect ratio to prevent card text truncation (#18) (e29e831)
+
 ## [v0.7.2] - 2026-03-30
 
 ### app
