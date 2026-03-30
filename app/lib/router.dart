@@ -7,8 +7,17 @@ import 'screens/home_screen.dart';
 import 'screens/meds_screen.dart';
 import 'screens/walk_screen.dart';
 import 'screens/water_screen.dart';
+import 'services/notification_service.dart';
 
 final router = GoRouter(
+  redirect: (context, state) {
+    final pending = NotificationService.pendingRoute;
+    if (pending != null) {
+      NotificationService.pendingRoute = null;
+      return pending;
+    }
+    return null;
+  },
   routes: [
     GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
     GoRoute(

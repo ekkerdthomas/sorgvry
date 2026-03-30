@@ -8,11 +8,13 @@ import 'database/web_database.dart'
     if (dart.library.io) 'database/native_database.dart';
 import 'providers/db_providers.dart';
 import 'router.dart';
+import 'services/notification_service.dart';
 import 'services/sync_service.dart';
 import 'theme.dart';
 import 'utils/device_id.dart';
 
 SyncService? _syncService;
+final notificationService = NotificationService();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +23,8 @@ void main() async {
   final localDb = AppLocalDatabase(openDatabase('sorgvry_local'));
 
   final deviceId = await getOrCreateDeviceId(localDb);
+
+  await notificationService.reschedule();
 
   _syncService?.stop();
   _syncService = SyncService(
