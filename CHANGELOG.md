@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.8.2] - 2026-03-30
+
+### backend
+#### Fixed
+- Normalise dates to UTC midnight in all /log/* endpoints (4cb3c9d)
+
 ## [v0.8.1] - 2026-03-30
 
 ### app

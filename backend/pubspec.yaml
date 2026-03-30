@@ -1,6 +1,6 @@
 name: sorgvry_backend
 description: Sorgvry Dart Frog API server.
-version: 0.6.0+7
+version: 0.6.1+8
 publish_to: none
 
 resolution: workspace
