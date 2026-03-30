@@ -9,12 +9,26 @@ import 'screens/walk_screen.dart';
 import 'screens/water_screen.dart';
 import 'services/notification_service.dart';
 
+const _validRoutes = {
+  '/medisyne',
+  '/bloeddruk',
+  '/water',
+  '/stap',
+  '/versorger',
+  '/versorger/dashboard',
+};
+
+bool _isValidRoute(String route) {
+  final path = Uri.tryParse(route)?.path ?? route;
+  return _validRoutes.contains(path);
+}
+
 final router = GoRouter(
   redirect: (context, state) {
     final pending = NotificationService.pendingRoute;
     if (pending != null) {
       NotificationService.pendingRoute = null;
-      return pending;
+      if (_isValidRoute(pending)) return pending;
     }
     return null;
   },

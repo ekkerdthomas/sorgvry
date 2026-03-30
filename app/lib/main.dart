@@ -24,7 +24,12 @@ void main() async {
 
   final deviceId = await getOrCreateDeviceId(localDb);
 
-  await notificationService.reschedule();
+  try {
+    await notificationService.requestPermission();
+    await notificationService.reschedule();
+  } catch (e) {
+    debugPrint('Notification init failed: $e');
+  }
 
   _syncService?.stop();
   _syncService = SyncService(

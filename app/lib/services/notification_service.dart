@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -38,6 +38,16 @@ class NotificationService {
     );
 
     _initialised = true;
+  }
+
+  Future<bool> requestPermission() async {
+    if (kIsWeb) return false;
+    await _init();
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    return await android?.requestNotificationsPermission() ?? false;
   }
 
   Future<void> reschedule() async {
@@ -114,7 +124,7 @@ class NotificationService {
         s.id,
         s.title,
         s.body,
-        _nextInstance(s.hour, s.minute, sast),
+        nextInstance(s.hour, s.minute, sast),
         details,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
@@ -124,21 +134,21 @@ class NotificationService {
       );
     }
 
-    // B12 notification — only if today is a B12 day
+    // B12 notification — one-shot (no matchDateTimeComponents) for the next
+    // upcoming B12 date. Rescheduled on every app launch.
     final now = DateTime.now();
-    if (isB12Day(now)) {
-      await _plugin.zonedSchedule(
-        7,
-        'Sorgvry',
-        'Jou B12 inspuiting is vandag',
-        _nextInstance(7, 0, sast),
-        details,
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        payload: '/medisyne?session=b12',
-      );
-    }
+    final nextB12Date = nextB12(now);
+    await _plugin.zonedSchedule(
+      7,
+      'Sorgvry',
+      'Jou B12 inspuiting is vandag',
+      nextInstanceOnDate(nextB12Date, 7, 0, sast),
+      details,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      payload: '/medisyne?session=b12',
+    );
   }
 
   Future<void> cancelAll() async {
@@ -148,14 +158,45 @@ class NotificationService {
   }
 
   /// Returns the next occurrence of [hour]:[minute] in [location].
-  tz.TZDateTime _nextInstance(int hour, int minute, tz.Location location) {
+  @visibleForTesting
+  static tz.TZDateTime nextInstance(
+    int hour,
+    int minute,
+    tz.Location location,
+  ) {
     final now = tz.TZDateTime.now(location);
-    var scheduled =
-        tz.TZDateTime(location, now.year, now.month, now.day, hour, minute);
+    var scheduled = tz.TZDateTime(
+      location,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
     return scheduled;
+  }
+
+  /// Returns [hour]:[minute] on [date] in [location].
+  /// If the resulting time is in the past, returns it as-is (the notification
+  /// plugin will fire it immediately or skip it).
+  @visibleForTesting
+  static tz.TZDateTime nextInstanceOnDate(
+    DateTime date,
+    int hour,
+    int minute,
+    tz.Location location,
+  ) {
+    return tz.TZDateTime(
+      location,
+      date.year,
+      date.month,
+      date.day,
+      hour,
+      minute,
+    );
   }
 }
 
