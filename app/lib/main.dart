@@ -1,14 +1,13 @@
-import 'package:cronet_http/cronet_http.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:sorgvry_shared/database/database.dart';
 
 import 'config.dart';
 import 'database/local_database.dart';
 import 'database/web_database.dart'
     if (dart.library.io) 'database/native_database.dart';
+import 'http/http_client.dart'
+    if (dart.library.io) 'http/native_http_client.dart';
 import 'providers/db_providers.dart';
 import 'router.dart';
 import 'services/notification_service.dart';
@@ -34,11 +33,7 @@ void main() async {
     debugPrint('Notification init failed: $e');
   }
 
-  // Use Android's native HTTP stack (Cronet) for proper DNS resolution
-  // with Private DNS and system proxy settings.
-  final httpClient = kIsWeb
-      ? http.Client()
-      : CronetClient.defaultCronetEngine();
+  final httpClient = createHttpClient();
 
   _syncService?.stop();
   _syncService = SyncService(
