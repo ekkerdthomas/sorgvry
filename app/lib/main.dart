@@ -1,5 +1,8 @@
+import 'package:cronet_http/cronet_http.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:sorgvry_shared/database/database.dart';
 
 import 'config.dart';
@@ -31,12 +34,19 @@ void main() async {
     debugPrint('Notification init failed: $e');
   }
 
+  // Use Android's native HTTP stack (Cronet) for proper DNS resolution
+  // with Private DNS and system proxy settings.
+  final httpClient = kIsWeb
+      ? http.Client()
+      : CronetClient.defaultCronetEngine();
+
   _syncService?.stop();
   _syncService = SyncService(
     healthDb: healthDb,
     localDb: localDb,
     baseUrl: backendUrl,
     deviceId: deviceId,
+    client: httpClient,
   )..start();
 
   runApp(
