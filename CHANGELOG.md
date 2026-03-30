@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.7.2] - 2026-03-30
+
+### app
+#### Fixed
+- Enable core library desugaring for flutter_local_notifications (519212f)
+
 ## [v0.7.1] - 2026-03-30
 
 ### app
