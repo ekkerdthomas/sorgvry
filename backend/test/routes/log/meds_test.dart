@@ -28,7 +28,7 @@ void main() {
     final request = _MockRequest();
 
     when(() => request.method).thenReturn(HttpMethod.post);
-    when(() => request.json()).thenAnswer((_) async => body);
+    when(request.json).thenAnswer((_) async => body);
     when(() => ctx.request).thenReturn(request);
     when(() => ctx.read<SorgvryDatabase>()).thenReturn(db);
     when(
@@ -98,7 +98,7 @@ void main() {
       final ctx = _MockRequestContext();
       final request = _MockRequest();
       when(() => request.method).thenReturn(HttpMethod.post);
-      when(() => request.json()).thenAnswer(
+      when(request.json).thenAnswer(
         (_) async => <String, dynamic>{
           'bad': 'data',
         },
