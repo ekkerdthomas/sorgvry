@@ -4,6 +4,7 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:drift/native.dart';
 import 'package:sorgvry_backend/middleware/auth.dart';
 import 'package:sorgvry_backend/services/minio_service.dart';
+import 'package:sorgvry_backend/services/version_service.dart';
 import 'package:sorgvry_shared/database/database.dart';
 
 final _db = SorgvryDatabase(
@@ -12,10 +13,13 @@ final _db = SorgvryDatabase(
 
 final _minio = MinioService();
 
+final _versionService = VersionService();
+
 Handler middleware(Handler handler) {
   return handler
       .use(authMiddleware())
       .use(provider<MinioService>((_) => _minio))
+      .use(provider<VersionService>((_) => _versionService))
       .use(provider<SorgvryDatabase>((_) => _db))
       .use(_cors);
 }

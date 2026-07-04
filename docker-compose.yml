@@ -11,6 +11,8 @@ services:
       - "172.17.0.1:8600:8080"
     volumes:
       - /opt/sorgvry/data:/app/data
+      # APK + version.json for the in-app updater (served no-store via /download)
+      - /opt/sorgvry/download:/app/download:ro
     env_file:
       - /opt/sorgvry/.env
     environment:

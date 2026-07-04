@@ -16,6 +16,7 @@ import 'services/day_refresh_controller.dart';
 import 'services/notification_service.dart';
 import 'services/sync_service.dart';
 import 'theme.dart';
+import 'update/update_checker.dart';
 import 'utils/device_id.dart';
 
 SyncService? _syncService;
@@ -111,6 +112,7 @@ class _SorgvryAppState extends ConsumerState<SorgvryApp>
       theme: sorgvryTheme,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
+      builder: (context, child) => UpdateChecker(child: child!),
     );
   }
 }

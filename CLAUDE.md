@@ -58,6 +58,8 @@ Key decisions:
 | GET | `/summary` | Daily health summary |
 | GET | `/bp/history` | Blood pressure history |
 | GET | `/data-export` | CSV export of all data |
+| GET | `/version` | Latest APK version metadata for in-app update (no auth) |
+| GET | `/download/:file` | Download APK/artifact, `no-store` (no auth) |
 
 ## Commands
 

@@ -27,6 +27,8 @@ dependencies:
   timezone: ^0.10.0
   package_info_plus: ^9.0.0
   cronet_http: ^1.8.0
+  open_filex: ^4.5.0
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:

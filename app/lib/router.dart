@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import 'screens/bp_screen.dart';
@@ -23,7 +24,13 @@ bool _isValidRoute(String route) {
   return _validRoutes.contains(path);
 }
 
+/// Root navigator key — lets app-wide widgets (e.g. the update dialog) obtain a
+/// context that sits under the Navigator, which `MaterialApp.router`'s builder
+/// context does not.
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final router = GoRouter(
+  navigatorKey: rootNavigatorKey,
   redirect: (context, state) {
     final pending = NotificationService.pendingRoute;
     if (pending != null) {

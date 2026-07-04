@@ -18,7 +18,13 @@ Middleware authMiddleware() {
   return (handler) {
     return (context) async {
       final path = context.request.uri.path;
-      if (path == '/auth/register' || path == '/' || path == '/health') {
+      // Public routes: registration, health, and the OTA update check +
+      // download (the installer/browser sends no bearer token).
+      if (path == '/auth/register' ||
+          path == '/' ||
+          path == '/health' ||
+          path == '/version' ||
+          path.startsWith('/download/')) {
         return handler(context);
       }
 
