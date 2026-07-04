@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../config.dart';
@@ -15,6 +16,17 @@ import '../providers/walk_providers.dart';
 import '../providers/water_providers.dart';
 import '../theme.dart';
 import '../utils/b12.dart';
+
+/// Localized "today" label for the home-screen header, e.g.
+/// "Saterdag, 4 Julie 2026". Falls back to the default locale if Afrikaans date
+/// data was not loaded (e.g. in widget tests that never ran `main`).
+String _todayLabel(DateTime now) {
+  try {
+    return DateFormat('EEEE, d MMMM yyyy', 'af').format(now);
+  } catch (_) {
+    return DateFormat('EEEE, d MMMM yyyy').format(now);
+  }
+}
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -305,8 +317,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          // 28 (heading) + 16 (gap) + padding = ~60px above grid
-          final availableHeight = constraints.maxHeight - 60;
+          // 28 (heading) + 4 (gap) + 24 (date line) + 16 (gap) + padding = ~88px above grid
+          final availableHeight = constraints.maxHeight - 88;
           final cardHeight = (availableHeight - 2 * SorgvrySpacing.gridGap) / 3;
           final cardWidth =
               (constraints.maxWidth - 3 * SorgvrySpacing.gridGap) / 2;
@@ -320,6 +332,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Text(
                   greeting,
                   style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _todayLabel(DateTime.now()),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(color: Colors.black54),
                 ),
                 const SizedBox(height: 16),
                 Expanded(
