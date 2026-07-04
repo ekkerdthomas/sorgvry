@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.8.3] - 2026-07-04
+
+### app
+#### Fixed
+- Refresh cached daily state on day rollover so reopening the app the next day shows a clean slate instead of the previous day's captures (3ffa5c4)
+
+#### Added
+- Live Afrikaans date header on the home screen (3ffa5c4)
+
 ## [v0.8.2] - 2026-03-30
 
 ### backend
