@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.9.0] - 2026-07-04
+
+### app
+#### Added
+- In-app APK auto-updater (Android): checks the backend on launch/resume and prompts to download + install new releases, with SHA-256 verification (370d735)
+
+### backend
+#### Added
+- `/version` and `/download/:file` endpoints backing the in-app updater; APK served `no-store` to bypass the CDN cache (370d735)
+#### Fixed
+- Run backend as uid 1000 and sync compose with prod hardening (beb0399)
+
 ## [v0.8.3] - 2026-07-04
 
 ### app
